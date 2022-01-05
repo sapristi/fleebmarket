@@ -7,9 +7,9 @@
     {% include "accounts/profile_details.html" with user=user %}
 
 
-    <form method="post">
-      {% csrf_token %}
-    {{ form|bulma }}
-    <input class="button" type="submit" value="Save">
+    <!-- <form method="post">
+         {% csrf_token %}
+         {{ form }}
+         <input class="button" type="submit" value="Save"> -->
   </form>
 {% endblock %}

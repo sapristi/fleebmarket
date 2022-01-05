@@ -129,16 +129,17 @@ def create_batch(
         try:
             advert_db.save()
         except Exception as exc:
-            logger.warning("Failed saving advert %s [%s]", advert_db)
+            logger.warning("Failed saving advert %s", advert_db)
             logger.warning(exc, exc_info=True)
             response.failed.append(advert_db.reddit_id)
             continue
 
-        try:
-            advert_db.parse_items()
-        except Exception as exc:
-            logger.error("Failed parsing advert [%s]: %s", advert_in.reddit_id, exc)
-            logger.exception(exc)
+        # no parsing for now
+        # try:
+        #     advert_db.parse_items()
+        # except Exception as exc:
+        #     logger.error("Failed parsing advert [%s]: %s", advert_in.reddit_id, exc)
+        #     logger.exception(exc)
 
         response.added.append(advert_in.reddit_id)
         added_adverts.append(advert_db)
