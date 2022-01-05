@@ -1,0 +1,24 @@
+{% extends "account/base.html" %}
+{% block title %}Profile{% endblock %}
+
+{% block body %}
+
+<div class="content">
+
+  {% include "accounts/profile_details.html" with user=user %}
+
+  <div class="box">
+    Social accounts:
+    <ul>
+      {% for account in social_accounts %}
+      <li>
+        {{account.provider}}: {{account.uid}} ( {{account.last_login}} )
+      </li>
+      {% endfor %}
+    </ul>
+    <a href="{% url "socialaccount_connections" %}">Manage social accounts</a>
+  </div>
+
+  <a href="{% url "accounts:profile" %}{{user.id}}"> Edit profile </a>
+
+  {% endblock %}

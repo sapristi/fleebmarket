@@ -1,0 +1,91 @@
+* scrapper
+
+  The scapper parses /r/mechmarket, and posts adds to fleebmarket that then
+  stores it in db and dispatches relevant data to meilisearch
+
+** algorithm
+  
+   1. get (to_update, last_id) from fleebmarket
+         if last_id is not none:: fetch newer submissions
+         else:: fetch the last N submissions
+   2. post new adverts to fleebmarket
+   3. fetch fresh data for submissions in to_update
+   4. patch updated data to fleebmarket (for adverts that changed)
+   5. call DELETE to remove unwanted adverts
+         
+* fleebmarket side
+
+  Fleebmarket stores reddit adverts in db; parsed data is stored in meilisearch
+  to provide a search mechanism.
+
+** data models
+
+*** In db
+    
+    + reddit_id
+    + title
+    + full_text
+    + created_utc
+    + author
+    + ad_type: parsed from submission flair
+    + last_updated: last time submission was scrapped on reddit
+    + extra: anything goes: pre-computed extracted data (flat dictionary)
+
+      
+    Possible field:
+    + stored_in_meili: boolean to indicate whether the advert is store in meiliearch
+      = plus side: easier to find adverts in meilisearch based on some criteria
+      = down side: hard to maintain; especially because meilisearch is async
+
+    
+
+*** In meilisearch
+
+    + source (mechmarket, etc)
+    + reddit_id
+    + ad_type
+    + created_utc (as int)
+    + Extra fields depending on advert type:
+      - region, country
+      - wants, offers
+      - title
+      - full_text (stripped from markdown format hints)
+    
+** API
+
+*** scrapper centric
+
+    - POST: add new submissions
+      1) parse submissions (title, body)
+      2) store correct submissions in db
+      3) put refined data in meilisearch
+         only buying / selling / trading for now
+    - GET: get a bounded list of submissions to update; get id of last stored submission
+      submissions to update:
+      + use a last_updated field to impose a max update rate:
+        selling, buying, trading:: every 10 minutes for a week; every hour for a month
+        other adverts:: every hour for a month
+    - PATCH: update submissions
+      + update adverts in db
+      + update adverts in meilisearch
+    - DELETE: remove adverts from meilisearch. To avoid memory issues, set a max number of
+      advers in meilisearch (or a time boundary on adverts ?)
+      + remove adverts that don't have allowed type
+      + remove extraneous adverts (older than limit, or oldest adverts to have
+        number of adverts under the limit)
+        We could do that on PATCH route, but doing this here limits the places where
+        code would be impacted by a change in policy.
+    
+*** public
+
+    - GET: search adverts
+    - POST: save search query
+    - PUT: save advert as favorite or something
+    
+** management
+
+    - add a command to reset meilisearch data:
+      + remove all data in meilisearh
+      + reset index definition
+      + iterate over data in db and populate meilisearch
+

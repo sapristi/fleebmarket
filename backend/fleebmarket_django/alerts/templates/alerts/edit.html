@@ -1,0 +1,73 @@
+{% extends "generic/base.html" %}
+{% block title %}Alerts{% endblock %}
+
+{% block body %}
+<form method="POST" action={% url "alerts:edit" pk %}>
+  {% csrf_token %}
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Terms</th>
+        <th>Advert type</th>
+        <th>Region</th>
+        <th>Sensitivity</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for alert in alerts %}
+      {% if alert.id != pk %}
+      <tr>
+        <td>{{alert.terms}}</td>
+        <td>{{alert.ad_type}}</td>
+        <td>{{alert.region}}</td>
+        <td>{{alert.sensitivity}}</td>
+        <td></tr>
+      </tr>
+      {% else %}
+      <tr>
+        <td>
+          <div class="field">
+            {{ form.terms.errors }}
+            <div class="control">
+              {{form.terms }}
+            </div>
+          </div>
+        </td>
+        <td>
+          <div class="field">
+            {{ form.ad_type.errors }}
+            <div class="control">
+              {{form.ad_type }}
+            </div>
+          </div>
+        </td>
+        <td>
+          <div class="field">
+            {{ form.region.errors }}
+            <div class="control">
+              {{form.region }}
+            </div>
+          </div>
+        </td>
+        <td>
+          <div class="field">
+            {{ form.sensitivity.errors }}
+            <div class="control">
+              {{form.sensitivity }}
+            </div>
+          </div>
+        </td>
+        <td>
+          <button type="submit" class="button">Update alert</button>
+        </td>
+      </tr>
+
+      {% endif %}
+      {% endfor %}
+    </tbody>
+  </table>
+
+
+</form>
+{% endblock %}

@@ -1,0 +1,8 @@
+server {
+    listen 	 443 default_server;
+    listen 	 444 default_server;
+    include      conf-ssl/ssl-fleebmarket.conf;
+    server_name  _; # some invalid name that won't match anything
+    return       444;
+}
+

@@ -1,0 +1,11 @@
+django-seed
+html2image
+django-stubs
+djangorestframework-stubs
+pytest
+pytest-env
+pytest-dotenv
+pytest-django
+ipython
+fuzzywuzzy-stubs
+whitenoise

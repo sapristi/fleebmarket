@@ -1,0 +1,20 @@
+{% load markdown_deux_tags %}
+
+{% if comments %}
+	{% for comment in comments %}
+			<article itemscope itemtype="http://schema.org/Comment" itemprop="comment" class="card" style="margin-bottom: 20px">
+				<span itemprop="text" class="content card-content">
+					{{ comment.bodytext|markdown }}
+				</span>
+				<footer class="card-footer">
+          <div class="content">
+					  Posted by <span itemprop="creator">{{ comment.user_name }}</span> on
+					  <time itemprop="dateCreated" datetime="{{ comment.post_date|date:'Y-m-d H:i:s' }}">
+						  {{ comment.post_date }}
+					  </time>
+          </div>
+				</footer>
+
+			</article>
+	{% endfor %}
+{% endif %}

@@ -1,0 +1,49 @@
+{% extends "generic/base.html" %}
+{% block title %}Alert{% endblock %}
+
+{% block body %}
+<div class="block">
+<table class="table">
+  <thead>
+    <tr>
+      <th>Terms</th>
+      <th>Advert type</th>
+      <th>Region</th>
+      <th>Sensitivity</th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for alert in alerts %}
+    <tr>
+      <td>{{alert.terms}}</td>
+      <td>{{alert.ad_type}}</td>
+      <td>{{alert.region}}</td>
+      <td>{{alert.sensitivity}}</td>
+      <td><a class="button" href={% url "alerts:edit" alert.id %}> Edit</a></td>
+      <td><a class="button" href={% url "alerts:delete" alert.id %}> Delete</a></td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+<div>
+  <button class="button"><a href={% url "alerts:create" %}>Create alert</a></button>
+</div>
+</div>
+
+<div class="block">
+<div class="message is-info" style="">
+  <div class="message-header">
+    <a href="{% url "alerts:help" %}">Alert help page</a>
+  </div>
+  <div class="message-body content">
+    If this is your first time using alerts, don't forget to checkout the <a href="{% url "alerts:help" %}">help page</a> in order to:
+    <ul>
+      <li>check to you can receive notifications.</li>
+      <li>understand how sensitivity works and simulate it.</li>
+    </ul>
+  </div>
+</div>
+</div>
+{% endblock %}

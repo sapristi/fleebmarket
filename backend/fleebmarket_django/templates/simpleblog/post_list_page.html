@@ -1,0 +1,36 @@
+
+{% load markdown_deux_tags %}
+{% load static %}
+
+{% if posts %}
+
+{% for post in posts %}
+<article itemscope itemtype="http://schema.org/Article" class="card"
+         style="margin: 20px 0"
+>
+	<header itemprop="name" class="card-header" style="display: flex; align-items: flex-end; justify-content: space-between">
+    <div>
+			<a href="{{ post.get_absolute_url }}">
+				<h3 class="subtitle is-3 has-text-link card-header-title">{{ post.title }}</h3>
+			</a></div>
+    <div>
+			<p>Posted on
+				<time itemprop="datePublished" datetime="{{ post.post_date|date:'Y-m-d H:i:s' }}">
+					{{ post.post_date }}
+				</time>
+      </p>
+    </div>
+	</header>
+
+  <div class="card-content">
+
+		<span  class="content" itemprop="articleBody">{{ post.bodytext | truncatechars:300 |markdown }}</span>
+
+		<footer class="card-footer">
+			<a class="button card-footer-item" href="{{ post.get_absolute_url }}">Read more</a>
+		</footer>
+  </div>
+</article>
+{% endfor %}
+
+{% endif %}

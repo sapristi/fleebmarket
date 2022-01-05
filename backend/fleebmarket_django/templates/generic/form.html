@@ -1,0 +1,12 @@
+{% extends "generic/base.html" %}
+{% block title %}{{title}}{% endblock %}
+
+{% block body %}
+
+  {{ form_header }}
+
+  {{ form|bulma }}
+
+  {{ form_footer }}
+
+{% endblock %}

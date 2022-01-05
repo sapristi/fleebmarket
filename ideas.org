@@ -1,0 +1,94 @@
+* ideas
+
+ * allow posting ads on mechmarket
+ * scrap data for keyboard prices
+ * alerts
+
+
+* Todo
+
+** Features
+
+ * tri des résultats / filtres d'exclusion
+   -> attente d'implem coté meilisearch
+
+** UI
+
+ * highlight search terms
+ * another possible layout: compact lines
+ * add CONUS option
+ * google image: extract direct url:
+   - extract this: <meta property="og:url" content=LINK_TO_ALBUM><meta property="og:image" content=DIRECT LINK>
+
+ * on profile page, display discord username (now only uid)
+     
+** Bugs / small fixes
+
+ * custom 404 page
+ * enlever /docs , /openapi.json en prod
+ * bug rendu annonce ott0cs
+
+ * refonte UI
+   * search filters
+   * add button to load more (in case screen is too big and scroll doesn't trigger)
+
+ * corriger liens reddit en reddit.com/ID 
+ 
+** Scrapper / db
+   
+ * remove duplicates
+   - when inserting, compare with previous ads of the same author; remove older ones
+
+ * handle interest check (even if to throw away immediatly)
+ * throw away explicitely what's not wanted
+    - maybe only keep in db, not meilisearch
+
+ * add time boundary in meilisearch data to limit memory usage
+
+   
+** Infra
+
+ * BACKUPS
+ 
+* Done
+
+** bugs
+   
+ * renommer search_ads en search (pb ublock et autres)
+ * enlever le code en doublon pour parser les annonces
+  
+** Scrapper
+   
+ * quand la dernière annonce a été supprimée, on ne la trouve pas dans le listing,
+   ce qui conduit à envoyer 1000 annonces (doublons) à fleebmarket. Arrive régulièrement
+   (= bcp de posts supprimés)
+   solutions:
+      * quand l'annonce est supprimée, demander la dernière à fleebmarket ?
+      * toujours demander la dernière à fleebmarket ?
+
+   pb: l'annoce a pu être mise dans fleebmarket
+    * si elle s'y trouve, la supprimer
+    * verifier à la création que l'annonce n'est pas supprimée (full_text == "[removed]")
+ 
+ * vérifier que la mise à jour des posts se fait bien (notamment au nivaeu du texte de l'annonce)
+
+ * certaines annonces n'ont pas de flair au moment du scrap, mais elles en ont un plus tard.
+   à voir comment faire pour les prendre en compte.
+   Solution;
+    * les mettre à jour en priorité (entre la création et ~30 min par ex)
+
+** UI
+   
+ * warn that ublock might be in the way
+ * rename ad_type -> type
+ * remember last input
+ * throttle / debounce pour être plus léger coté serveur comme client
+   + throttle: non car on risque de perdre des inputs
+   + debounce faible (100 ms): limite les appels sans ĕtre trop perceptible
+ * add "scroll" button/ "no more result" item
+
+** Features
+   
+ - blog app:
+   - https://github.com/drager/django-simple-blog
+   - https://github.com/saadmk11/django-newsfeed <- better suited, maybe a bit too big at first

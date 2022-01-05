@@ -1,0 +1,39 @@
+{% extends 'generic/base.html' %}
+
+{% load markdown_deux_tags %}
+
+{% block body %}
+
+<article itemscope itemtype="http://schema.org/Article" class="card mb-6">
+	<header itemprop="name" class="card-header" style="display: flex; align-items: flex-end; justify-content: space-between">
+    <div>
+				<h2 class="subtitle is-2 card-header-title has-text-info">{{ post.title }}</h2>
+		</div>
+    <div>
+			<p>Posted on
+				<time itemprop="datePublished" datetime="{{ post.post_date|date:'Y-m-d H:i:s' }}">
+					{{ post.post_date }}
+				</time>
+      </p>
+    </div>
+	</header>
+
+  <div class="card-content">
+		<span  class="content" itemprop="articleBody">{{ post.bodytext | markdown }}</span>
+  </div>
+</article>
+
+
+{% if post.allow_comments  %}
+
+	<h2 class="title is-h3">Comments</h2>
+
+	{% include page_template %}
+
+  {% if user.is_authenticated %}
+  {% include 'simpleblog/comment_post_form.html' %}
+  {% endif %}
+
+{% endif %}
+
+{% endblock %}

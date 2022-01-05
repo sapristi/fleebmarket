@@ -1,0 +1,19 @@
+server {
+    return 300 https://$server_name$request_uri;
+    server_name fleebmarket.mmill.eu;
+    listen 80;
+}
+
+server {
+
+    listen 443 ssl http2;
+    listen [::]:443 ssl http2;
+
+    server_name fleebmarket.mmill.eu;
+
+    include conf-ssl/ssl-fleebmarket.conf;
+
+    error_page 502 /502.html;
+
+    include conf-bg/main;
+}

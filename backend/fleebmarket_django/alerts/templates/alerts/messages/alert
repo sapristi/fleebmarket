@@ -1,0 +1,6 @@
+You have {{data | length}} new alert matches !
+
+{% for alert, advert, score in data %}
+ - https://reddit.com/{{advert.reddit_id}} matches your alert for "{{alert.terms}}" with score {{score}}%.{% endfor %}
+
+Enjoy,

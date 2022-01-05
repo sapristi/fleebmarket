@@ -1,0 +1,14 @@
+[Unit]
+Description=Backup service
+
+[Service]
+EnvironmentFile=/fleebmarket/.env
+ExecStart=/fleebmarket/services/backup/backup.sh
+Type=simple
+Restart=no
+User=uuu
+
+
+[Install]
+WantedBy=multi-user.target
+

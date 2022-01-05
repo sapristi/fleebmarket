@@ -1,0 +1,77 @@
+.hbox {
+    display: flex;
+    flex-direction: row;
+}
+
+.vbox {
+    display: flex;
+    flex-direction: column;
+}
+
+
+.field-required::after {
+    content: "*";
+    color: red;
+}
+
+.faq-item {
+    margin-bottom: 10px;
+}
+
+.faq-title {
+    font-weight: 600;
+    font-size: 1rem;
+    margin-bottom: 5px;
+}
+
+
+.slider {
+    width: 500px;
+    height: 300px;
+    background-color: yellow;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 0px;
+    text-align: center;
+    overflow: hidden;
+}
+.slider-image-container {
+    width: 1500px;
+    background-color: pink;
+    height: 300px;
+    clear: both;
+    position: relative;
+    -webkit-transition: left 1s;
+    -moz-transition: left 1s;
+    -o-transition: left 1s;
+    transition: left 1s;
+    display: flex;
+    flex-direction: row;
+}
+.slide {
+    float: left;
+    margin: 0px;
+    padding: 0px;
+    position: relative;
+}
+
+#slide-0:target ~ .slider-image-container {
+    left: 0px;
+}
+#slide-1:target ~ .slider-image-container {
+    left: -500px;
+}
+#slide-2:target ~ .slider-image-container {
+    left: -1000px;
+}
+.slider-buttons {
+    position: relative;
+    top: -20px;
+}
+.slider-buttons a {
+    display: inline-block;
+    height: 15px;
+    width: 15px;
+    border-radius: 50px;
+    background-color: lightgreen;
+}

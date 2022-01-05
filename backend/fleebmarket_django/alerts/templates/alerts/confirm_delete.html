@@ -1,0 +1,38 @@
+{% extends "generic/base.html" %}
+{% block title %}Alerts{% endblock %}
+
+{% block body %}
+<form method="POST" action={% url "alerts:delete" pk %}>
+  {% csrf_token %}
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Terms</th>
+        <th>Advert type</th>
+        <th>Region</th>
+        <th>Sensitivity</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for alert in alerts %}
+      <tr>
+        <td>{{alert.terms}}</td>
+        <td>{{alert.ad_type}}</td>
+        <td>{{alert.region}}</td>
+        <td>{{alert.sensitivity}}</td>
+        {% if alert.id != pk %}
+        <td></tr>
+          {% else %}
+          <td>
+            <button type="submit" class="button">Confirm deletion</button>
+          </td>
+          {% endif %}
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+
+</form>
+{% endblock %}

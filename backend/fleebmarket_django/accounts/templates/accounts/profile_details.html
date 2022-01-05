@@ -1,0 +1,10 @@
+<div class="box">
+  Signed in as {{user.username}}
+
+  <ul>
+    <li><a href="{% url 'account_email' %}">Change E-mail</a></li>
+    <li><a href="{% url 'account_logout' %}">Sign Out</a></li>
+  </ul>
+
+  Country: {{ user.country }}
+</div>

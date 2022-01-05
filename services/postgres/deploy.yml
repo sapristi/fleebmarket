@@ -1,0 +1,29 @@
+version: "3.9"
+
+services:
+  postgres:
+    image: fm_postgres
+    build:
+      context: postgres
+      dockerfile: Dockerfile
+    environment:
+      POSTGRES_PASSWORD: $POSTGRES_PWD
+      FLEEBMARKET_POSTGRES_PASSWORD: $FLEEBMARKET_POSTGRES_PASSWORD
+    volumes:
+      - $DATA_PATH/postgres/data:/var/lib/postgresql/data
+      - /var/run/postgresql:/var/run/postgresql
+    ports:
+      - 5432:5432
+    networks:
+      - adminer
+    hostname: postgres
+
+  adminer:
+    image: adminer
+    ports:
+      - 1001:8080
+    networks:
+      - adminer
+
+networks:
+  adminer:

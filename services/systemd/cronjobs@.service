@@ -1,0 +1,12 @@
+[Unit]
+Description=Fleebmarket cronjobs[%i]
+
+[Service]
+EnvironmentFile=/fleebmarket_%i/.env
+ExecStart=/fleebmarket_%i/cronjobs/start.fish
+Restart=always
+RestartSec=5
+SyslogIdentifier=Cronjobs[%i]
+
+[Install]
+WantedBy=multi-user.target

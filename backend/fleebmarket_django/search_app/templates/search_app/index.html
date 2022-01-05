@@ -1,0 +1,22 @@
+{% extends "generic/base.html" %}
+{% load static %}
+
+{% block head_extra %}
+
+<link rel="stylesheet" href="{% static 'search_app/css/bundle.min.css' %}">
+
+
+{% endblock %}
+
+{% block title %}{% endblock %}
+
+{% block body %}
+
+{% block container_begin %}    {% endblock %}
+
+<div id="root"></div>
+
+{% block container_end %}   {% endblock %}
+<script src="{% static 'search_app/js/bundle.min.js' %}"> </script>
+
+{% endblock %}

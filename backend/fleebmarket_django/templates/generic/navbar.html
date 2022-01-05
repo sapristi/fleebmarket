@@ -1,0 +1,75 @@
+<nav class="navbar is-light" role="navigation" aria-label="main navigation">
+  <div class="navbar-brand">
+    <div>
+      <a href="/"> <span class="title is-2">Fleebmarket</span></a>
+    </div>
+    <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navMenu">
+      <span aria-hidden="true"></span>
+      <span aria-hidden="true"></span>
+      <span aria-hidden="true"></span>
+    </a>
+
+  </div>
+
+  <div class="navbar-menu" id="navMenu">
+    <div class="navbar-start">
+
+      <a class="navbar-item" href="{% url 'search_app:index' %}">
+          Search /r/mechmarket
+      </a>
+      <a class="navbar-item" href="{% url 'alerts:index' %}">
+        Alerts
+      </a>
+
+    </div>
+
+
+    <div class="navbar-end">
+
+      {% if survey_active %}
+      <div class="navbar-item">
+        <a class="button is-link" href="{% url 'survey:take' %}">
+          Pre-launch survey is open !
+        </a>
+      </div>
+      {% endif %}
+
+      <a class="navbar-item" href="{% url 'blog_index' %}">
+        News
+      </a>
+      <a class="navbar-item" href="{% url 'contact' %}">
+          Contact
+      </a>
+
+      <a class="navbar-item" href="{% url 'about' %}">
+        About
+      </a>
+
+      {% if user.is_authenticated %}
+
+      <div class="navbar-item has-dropdown is-hoverable">
+        <a class="navbar-link" href="{% url 'accounts:profile' %}">
+          {{user.get_username}}
+        </a>
+        <div class="navbar-dropdown">
+          <a class="navbar-item" href="{% url 'account_logout' %}">
+            Log out
+          </a>
+        </div>
+      </div>
+
+      {% else %}
+      <div class="navbar-item">
+        <div class="buttons">
+          <!-- <a class="button is-primary" href="{% url 'account_signup' %}">
+               <strong>Sign up</strong>
+               </a> -->
+          <a class="button is-primary" href="{% url 'account_login' %}">
+            Log in
+          </a>
+        </div>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</nav>

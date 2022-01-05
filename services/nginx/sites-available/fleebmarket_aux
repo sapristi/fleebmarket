@@ -1,0 +1,13 @@
+server {
+
+    listen 444 ssl http2;
+    listen [::]:444 ssl http2;
+
+    server_name fleebmarket.mmill.eu;
+
+    include conf-ssl/ssl-fleebmarket.conf;
+
+    error_page 502 /502.html;
+    
+    include conf-bg/aux;
+}

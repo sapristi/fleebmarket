@@ -1,0 +1,15 @@
+{% extends "account/base.html" %}
+{% block title %}Profile{% endblock %}
+
+{% block body %}
+
+  <div class="content">
+    {% include "accounts/profile_details.html" with user=user %}
+
+
+    <form method="post">
+      {% csrf_token %}
+    {{ form|bulma }}
+    <input class="button" type="submit" value="Save">
+  </form>
+{% endblock %}

@@ -1,0 +1,14 @@
+{% load floppyforms floppyforms_internals %}{% block row %}{% for field in fields %}
+{% with classes=field.css_classes label=label|default:field.label help_text=help_text|default:field.help_text %}
+{% block field %}
+{% block errors %}{% include "floppyforms/errors.html" with errors=field.errors %}{% endblock %}
+<div class="field">
+  {% block label %}{% if field|id %}<label for="{{ field|id }}" class="label">{% endif %}{{ label }}{% if label|last not in ".:!?" %}{% if not field.field.label_suffix|isnone %}{{ field.field.label_suffix }}{% else %}{{ form.label_suffix }}{% endif %}{% endif %}{% if field|id %}</label>{% endif %}{% endblock %}
+  <div class="control">
+    {% block widget %}{% formfield field %}{% endblock %}
+    {% block help_text %}{% if help_text %}<span class="helptext">{{ help_text }}</span>{% endif %}{% endblock %}
+  </div>
+    {% block hidden_fields %}{% for field in hidden_fields %}{{ field.as_hidden }}{% endfor %}{% endblock %}
+</div>
+{% endblock %}
+{% endwith %}{% endfor %}{% endblock %}

@@ -1,0 +1,6 @@
+typer
+python-dotenv
+requests
+cysystemd
+gitpython
+humanize

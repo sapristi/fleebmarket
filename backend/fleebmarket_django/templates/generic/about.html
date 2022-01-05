@@ -1,0 +1,67 @@
+{% extends "generic/base.html" %}
+{% block title %}About{% endblock %}
+
+{% block body %}
+
+<h3 class="title is-3">Current status</h3>
+<article class="message is-dark">
+  <div class="message-body">
+    <p>For now, fleebmarket is a frontend the <a href="https://reddit.com/r/mechmarket">/r/mechmarket subreddit</a>. It provides a search engine and dynamic frontend that allows to quickly and efficiently search for adverts posted on the subreddit.
+    </p>
+    <p>
+      Next features:
+      <ul>
+        <li>Allow users to define alerts.</li>
+        <li>Work on a finer grained parsing mechanism.</li>
+      </ul>
+    </p>
+  </div>
+</article>
+
+<h3 class="title is-3">FAQ</h3>
+<article class="message is-dark">
+  <div class="message-body content">
+    <ul>
+      <li>
+        <div class="faq-item">
+          <div class="faq-title">Where does the name Fleebmarket comes from ?</div>
+          Fleebmarket is kind of a contraction between « flea-market » and « keeb ».
+        </div>
+      </li>
+      <li>
+        <div class="faq-item">
+          <div class="faq-title">Does Fleebmarket track me ?</div>
+          As of now, there is no tracker of any kind on the website. I do not intend to include any in the future either.
+        </div>
+      </li>
+
+      <li>
+        <div class="faq-item">
+          <div class="faq-title">Is Fleebmarket RGPD compliant ?</div>
+          In the event that a reddit post containing personal information would find it's way on fleebmarket, you can request for it's deletion. Otherwise, since no personal data is hosted on fleebmarket, it should be RGPD compliant. 
+        </div>
+      </li>
+
+    </ul>
+  </div>
+</article>
+
+
+<h3 class="title is-3">Ackownledgements</h3>
+<article class="message is-dark">
+  <div class="message-body content">
+    Fleebmarket is built atop great open-source software:
+    <ul>
+      <li><a href="https://www.djangoproject.com/">Django</a> provides the central infrastucture of the service (along with various Django apps).</li>
+      <li><a href="https://fastapi.tiangolo.com/">FastAPIDjango REST Framework </a> is used to implement the API</li>
+      <li><a href="https://reactjs.org/">React</a> is used for the dynamic parts of the interface.</li>
+      <li>The django db runs on a <a href="https://www.postgresql.org/">PostgreSQL</a> instance.</li>
+      <li>The text search functionality is provided by a <a href="https://www.meilisearch.com/">Meilisearch</a> instance.</li>
+      <li><a href="https://bulma.io/">Bulma</a> provides thee CSS framework, along with <a href="https://github.com/timonweb/django-bulma">django-bulma</a> for integration into Django templates.</li>
+      <li><a href="https://www.uvicorn.org/">Uvicorn</a> and <a href="https://www.nginx.com/">nginx</a> provide the web server facilities.</li>
+      <li>Everything is hosted on a single <a href="https://www.pine64.org/devices/single-board-computers/rock64/"> Rock64 board</a> running <a href="https://manjaro.org/">Manjaro</a> </li>
+    </ul>
+  </div>
+</article>
+
+{% endblock %}

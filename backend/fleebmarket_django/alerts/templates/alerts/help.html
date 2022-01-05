@@ -1,0 +1,53 @@
+{% extends "generic/base.html" %}
+{% block title %}Alerts help{% endblock %}
+
+
+{% block body %}
+
+<h2 class="title">Alerts</h2>
+<p>Alerts allow you to receive notifications when an advert matching the given criteria is posted on /r/mechmarket. The notification will be sent to either reddit, discord or both, depending on your linked social accounts. Granted that all services are up and running, alerts should be sent at most a few minutes after an advert is posted on the subreddit.</p>
+
+<p>In order to receive discord notifications, you have to join the fleebmarket discord: <a href="https://discord.gg/XQXpsv7wEP"> https://discord.gg/XQXpsv7wEP </a>.</p>
+
+<p>
+You can check that you do receive notifications by clicking on this button:
+<form method="POST" action={% url "alerts:test_notifications" %}>
+  {% csrf_token %}
+  <button type="submit" class="button is-primary">Test notification</button>
+</form>
+</p>
+
+<h2 class="title">Relevancy</h2>
+<p>
+  An advert relevancy to the given search terms is computed by fuzzy searching the search terms against both the title and the body of the advert. The relevancy of each term is the maximum relevancy found on either the title or the body. The final relevancy is the average relevancy over the search terms.
+</p>
+
+<p>
+  Notifications will be sent only for adverts whose relevancy is above the alert sensitivity.
+</p>
+
+<p>
+  You can check the relevancy using the following form:
+  <form method="POST" action={% url "alerts:help" %}>
+    {% csrf_token %}
+    <div style="display: flex; flex-direction: row; justify-content: space-around; align-items: center">
+    <div class="field">
+      <label class="label">Search terms</label>
+      <div class="control">
+        {{form.terms }}
+      </div>
+    </div>
+    <div class="field">
+      <label class="label">Text</label>
+      <div class="control">
+        {{form.full_text }}
+      </div>
+    </div>
+    </div>
+    <button type="submit" class="button is-primary">Test Relevancy</button>
+  </form>
+  {% if relevancy != None %}
+  Relevancy is {{relevancy}}%
+  {% endif %}
+</p>
+{% endblock %}

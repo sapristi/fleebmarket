@@ -1,0 +1,31 @@
+{% load static %}
+{% load django_simple_bulma %}
+{% bulma %}
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Fleebmarket : a /r/mechmarket frontend</title>
+    <link rel="stylesheet" href="{% static 'custom_styles.css' %}">
+    <link rel="shortcut icon" type="image/png" href="{% static 'favicon.png' %}"/>
+    <meta name="description" content="Frontend providing a better search experience to the https://reddit.com/r/mechmarket subreddit."/>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="{% static 'tools.js' %}"></script>
+    <meta charset="UTF-8">
+    {% block head_extra %}{% endblock %}
+  </head>
+  <body>
+    {% if global_notification %}
+      <div class="notification {{global_notification.classes}}" style="margin-bottom: 0">
+        <div style="margin: auto">
+          {{global_notification.text}}
+        </div>
+      </div>
+    {% endif %}
+    {% include 'generic/navbar.html' %}
+      <div class="container">
+          <h1 class="title is-1"> {% block title %}{% endblock %} </h1>
+          {% block body %}{% endblock %}
+      </div>
+  </body>
+</html>
+

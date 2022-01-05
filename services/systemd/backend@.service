@@ -1,0 +1,15 @@
+[Unit]
+Description=Fleebmarket backend[%i]
+
+[Service]
+EnvironmentFile=/fleebmarket_%i/.env
+ExecStart=/fleebmarket_%i/backend/scripts/start_uvicorn.sh
+Type=simple
+NotifyAccess=all
+Restart=always
+SyslogIdentifier=Backend[%i]
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
+

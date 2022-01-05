@@ -1,0 +1,12 @@
+[submodule "advert_parsing"]
+	path = advert_parsing
+	url = git@github.com:sapristi/fleebmarket_advert_parsing.git
+[submodule "frontend"]
+	path = frontend
+	url = git@github.com:sapristi/fleebmarket_frontend.git
+[submodule "backend"]
+	path = backend
+	url = git@github.com:sapristi/fleebmarket_backend.git
+[submodule "cronjobs"]
+	path = cronjobs
+	url = git@github.com:sapristi/fleebmarket_cronjobs.git
