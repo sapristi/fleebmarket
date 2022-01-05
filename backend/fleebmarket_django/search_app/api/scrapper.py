@@ -129,7 +129,7 @@ def create_batch(
         try:
             advert_db.save()
         except Exception as exc:
-            logger.warning("Failed saving advert %s [%s]", advert_db)
+            logger.warning("Failed saving advert %s", advert_db)
             logger.warning(exc, exc_info=True)
             response.failed.append(advert_db.reddit_id)
             continue
