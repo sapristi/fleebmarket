@@ -14,6 +14,6 @@ setup(
     name="advert_parsing",
     version="0.1",
     packages=['advert_parsing'],
-    requires=requires,
+    install_requires=requires,
     dependency_links=['git+https://github.com/sapristi/misaka.git@master']
 )
