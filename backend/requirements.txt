@@ -4,7 +4,7 @@ django-multiselectfield==0.1.12
 Pillow==8.0.1
 python-dotenv
 git+https://github.com/sapristi/django-simple-blog.git
-meilisearch==0.14.2
+meilisearch>=0.17.0,<0.18
 mistune==2.0.0rc1
 django_filter
 django-cors-headers

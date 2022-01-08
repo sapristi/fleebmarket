@@ -35,6 +35,8 @@ class RedditAdvert(models.Model):
             raise exc from None
 
     def serialize_meilisearch(self):
+        if not self.ad_type in (RedditAdvertType.Selling, RedditAdvertType.Buying, RedditAdvertType.Trading):
+            return None
         if self.extra is None:
             return None
         res = {
@@ -43,16 +45,17 @@ class RedditAdvert(models.Model):
             "ad_type": self.ad_type,
             "created_utc": self.created_utc.timestamp(),
         }
-        for k, v in self.extra.items():
-            if isinstance(v, str):
-                res[k] = v
+        for key in ["text", "wants", "offers", "region", "country"]:
+            if not isinstance(self.extra[key], str):
+                print(res)
+                raise
+            res[key] = self.extra[key]
         return res
 
     def save_meilisearch(self):
-        if self.ad_type in (RedditAdvertType.Selling, RedditAdvertType.Buying, RedditAdvertType.Trading):
-            self_meili = self.serialize_meilisearch()
-            if self_meili is not None:
-                MAdvertsIndex.add_to_update(self_meili)
+        self_meili = self.serialize_meilisearch()
+        if self_meili is not None:
+            MAdvertsIndex.add_to_update(self_meili)
         else:
             MAdvertsIndex.add_to_delete(self.reddit_id)
 
