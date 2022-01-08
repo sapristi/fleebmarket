@@ -14,18 +14,17 @@ meilisearch_host = os.environ['MEILISEARCH_HOST']
 meili_client = meilisearch.Client(meilisearch_host, timeout=5)
 
 ranking_default = [
+  "exactness",
   "typo",
   "attribute",
   "proximity",
   "words",
-  "wordsPosition",
-  "exactness",
-  "desc(created_utc)",
+  "created_utc:desc",
 ]
 
 class MeiliIndexSettings(BaseModel):
     searchableAttributes: list[str]
-    displayedAttributes: list[str] = []
+    # displayedAttributes: list[str] = []
     stopWords: list[str] = stop_words
     rankingRules: list[str] = ranking_default
 
@@ -33,7 +32,7 @@ class MeiliIndex(BaseModel):
     name: str
     settings: MeiliIndexSettings
     pkey: str
-    faceting_attributes: list[str]
+    filterableAttributes: list[str]
 
     # do not initialize those fields; they are used by the instances
     to_add: list[dict] = []
@@ -45,15 +44,18 @@ class MeiliIndex(BaseModel):
 
     def initialize(self):
         existing_indexes = meili_client.get_indexes()
-        existing_index_names = [index["name"] for index in existing_indexes]
+        existing_index_names = [index.uid for index in existing_indexes]
         if not self.name in existing_index_names:
             logger.info(f"Creating index {self.name}")
             meili_client.create_index(self.name, {'primaryKey': self.pkey})
         else:
             logger.info(f"Index {self.name} already exists")
 
+        # if not self.pkey in self.settings.displayedAttributes:
+        #     self.settings.displayedAttributes.append(self.pkey)
+
         self.client().update_settings(self.settings.dict())
-        self.client().update_attributes_for_faceting(self.faceting_attributes)
+        self.client().update_filterable_attributes(self.filterableAttributes)
 
     def add_to_update(self, document: dict):
         self.to_update.append(document)
@@ -80,13 +82,12 @@ MAdvertsIndex = MeiliIndex(
     settings=MeiliIndexSettings(searchableAttributes=[
         'offers',
         'wants',
-        'title_stripped',
         'text',
         'country',
         'region'
     ]),
     pkey="reddit_id",
-    faceting_attributes=['ad_type', "region", "country"]
+    filterableAttributes=['ad_type', "region", "country"]
 )
 MAdvertsItemsIndex = MeiliIndex(
     name="AdvertItems",
@@ -96,7 +97,7 @@ MAdvertsItemsIndex = MeiliIndex(
         'region'
     ]),
     pkey="pkey",
-    faceting_attributes=['ad_type', "region", "country"]
+    filterableAttributes=['ad_type', "region", "country"]
 )
 
 
@@ -107,10 +108,12 @@ def initialise_meilisearch():
 
 
 def clear_meilisearch():
+
     logger.info("Reseting meilisearch db")
 
     indexes = meili_client.get_indexes()
-    index_names = [index["name"] for index in indexes]
+    index_names = [index.uid for index in indexes]
+    logger.info("Deleting indices %s", index_names)
     for index_name in index_names:
         meili_client.index(index_name).delete()
 

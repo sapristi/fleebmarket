@@ -19,12 +19,12 @@ def search(
     limit: int = 20,
     offset: int = 0,
 ):
-    facet_filters = []
+    filters = []
     if type:
-        facet_filters.append(f"ad_type:{type}")
+        filters.append(f"ad_type = {type}")
 
     if region:
-        facet_filters.append(f"region:{region}")
+        filters.append(f"region = {region}")
 
     query_res = MAdvertsIndex.client().search(
         terms,
@@ -32,7 +32,7 @@ def search(
             "attributesToRetrieve": ["reddit_id"],
             "limit": limit,
             "offset": offset,
-            "facetFilters": facet_filters if facet_filters else None
+            "filter": " AND ".join(filters) if filters else None
             }
     )
     # TODO: since we are filtering the result, the next offset should
