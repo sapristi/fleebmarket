@@ -9,4 +9,4 @@ RestartSec=5
 SyslogIdentifier=Cronjobs[%i]
 
 [Install]
-WantedBy=multi-user.target
+WantedBy=default.target
