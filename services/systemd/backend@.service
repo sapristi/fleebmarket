@@ -11,5 +11,5 @@ SyslogIdentifier=Backend[%i]
 RestartSec=5
 
 [Install]
-WantedBy=multi-user.target
+WantedBy=default.target
 

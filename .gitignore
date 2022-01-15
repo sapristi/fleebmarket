@@ -4,3 +4,4 @@ services/nginx/conf-bg/main
 services/nginx/conf-bg/aux
 __pycache__/
 .venv/
+.projectile

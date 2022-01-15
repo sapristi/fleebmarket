@@ -5,7 +5,6 @@ from collections import  Counter
 from pathlib import Path
 from dataclasses import dataclass
 
-import requests
 import typer
 from cysystemd.reader import JournalReader, JournalOpenMode, Rule, JournalEntry
 
@@ -124,6 +123,7 @@ def send(
     test_channel: bool = typer.Option(False, help="Use test channel."),
     since_hours: int = 1,
 ):
+    import requests # delayed import for performance
     channel_id = 908122255417020458 if test_channel else 906427494561894421
     collector = AlertsCollector()
     collector.collect_all(since_hours)

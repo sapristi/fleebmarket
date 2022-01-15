@@ -24,7 +24,7 @@ class Profile(View):
 
 class ProfileUpdate(UpdateView):
     model = CustomUser
-    fields = ("country", )
+    fields = ( )
     success_url = ''
 
     # Check we can only edit current user

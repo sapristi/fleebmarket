@@ -1,3 +1,4 @@
+{% load static %}
 <nav class="navbar is-light" role="navigation" aria-label="main navigation">
   <div class="navbar-brand">
     <div>
@@ -70,6 +71,12 @@
         </div>
       </div>
       {% endif %}
+      <div class="navbar-item">
+        <a class="button" href="https://github.com/sapristi/fleebmarket">
+          <img src="{% static 'icons/GitHub.png' %}">
+        </a>
+      </div>
+
     </div>
   </div>
 </nav>

@@ -1,8 +1,1 @@
-__pycache__
-/runtime_data
-/data/*
-.env
-*.kdbx
-venv/
-.venv
 fleebmarket_django/static/search_app
