@@ -40,3 +40,4 @@ class ManagementLogging:
             level = logging.DEBUG
 
         logging.getLogger().setLevel(level)
+        self.getLogger().setLevel(level)

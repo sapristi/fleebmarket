@@ -33,6 +33,7 @@ FROM
       WHERE
         ad_type IN ('Selling', 'Buying', 'Trading')
         AND created_utc > now() - INTERVAL %s
+        AND is_duplicate = false
     )
     AS T
 ) as s
