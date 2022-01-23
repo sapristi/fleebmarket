@@ -231,28 +231,6 @@ LOGGING = {
         'handlers': ['console'],
         'level': 'WARNING',
     },
-    'loggers': {
-        'django': {
-            'handlers': ['console'],
-            'level': 'INFO',
-            'propagate': False,
-        },
-        'django.template': {
-            'handlers': ['console'],
-            'level': 'DEBUG',
-            'propagate': False,
-        },
-        'uvicorn': {
-            'propagate': False,
-            # 'handlers': ['null']
-            'handlers': ['console']
-        },
-        'search_app': {
-            'handlers': ['console'],
-            'level': 'INFO',
-            'propagate': False,
-        },
-    },
 }
 
 REDDIT_CREDS = {
