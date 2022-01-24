@@ -133,9 +133,14 @@ def send(
 
     print(f"Found {len(collector.alerts)} errors.")
     for alert, count in collector.alerts.most_common():
+        content_trunc = alert.format_discord(count)[:2000]
         response = requests.post(
             f"https://discord.com/api/channels/{channel_id}/messages",
             headers = {"Authorization": f"Bot {discord_token}"},
-            json={"content": alert.format_discord(count)}
+            json={"content": content_trunc}
         )
-        response.raise_for_status()
+        try:
+            response.raise_for_status()
+        except Exception:
+            print("Failed sending alert:", response.text)
+            print(response.text)
