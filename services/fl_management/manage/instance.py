@@ -45,16 +45,9 @@ class ServiceStatus:
 
         Otherwise it is healthy.
         """
-        if self.running_since is None:
-            # unit should be stopped
-            if self.running:
-                return HealthStatus.UNHEALTHY
-            else:
-                return HealthStatus.HEALTHY
 
-        # if running_since is not None and unit is not running, something is wrong
         if not self.running:
-            return HealthStatus.UNHEALTHY
+            return HealthStatus.UNHEALTHY if self.should_be_running else HealthStatus.HEALTHY
 
         # if more than one restart per hour
         if self.n_restarts > self.running_since / timedelta(hours=1):
@@ -125,6 +118,8 @@ class Service:
 
     @property
     def running_since(self) -> Optional[timedelta]:
+        if not self.running:
+            return None
         res = self.ctl("show", "-P", "ActiveEnterTimestamp", check=True)
         timestamp = res.stdout.decode().strip()
         if not timestamp:
