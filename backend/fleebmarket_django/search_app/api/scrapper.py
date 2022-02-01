@@ -134,6 +134,7 @@ def create_batch(
             response.failed.append(advert_db.reddit_id)
             continue
 
+        advert_db.mark_duplicates()
         # no parsing for now
         # try:
         #     advert_db.parse_items()

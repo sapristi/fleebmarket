@@ -1,4 +1,5 @@
 import logging
+from typing import List
 from django.db import models
 from django.db.models.fields.json import JSONField
 
@@ -8,6 +9,7 @@ from search_app.meilisearch_utils import MAdvertsIndex
 
 from .common import RedditAdvertType
 from .parse import parse_mechmarket_advert
+from .duplicates import duplicate_offers
 
 logger = logging.getLogger(__name__)
 
@@ -18,9 +20,10 @@ class RedditAdvert(models.Model):
     ad_type = models.CharField(max_length=20, choices=RedditAdvertType.choices(), db_index=True, blank=True, null=True)
     created_utc = models.DateTimeField(db_index=True)
     full_text = models.TextField(blank=True)
-    author = models.CharField(max_length=100)
+    author = models.CharField(max_length=100, db_index=True)
     last_updated = models.DateTimeField(auto_now=True, db_index=True)
     extra = JSONField(blank=True, null=True)
+    is_duplicate = models.BooleanField(default=False, db_index=True)
 
     def update_extra(self):
         extra = parse_mechmarket_advert(
@@ -38,6 +41,8 @@ class RedditAdvert(models.Model):
         if not self.ad_type in (RedditAdvertType.Selling, RedditAdvertType.Buying, RedditAdvertType.Trading):
             return None
         if self.extra is None:
+            return None
+        if self.is_duplicate:
             return None
         res = {
             "source": "/r/mechmarket",
@@ -91,3 +96,42 @@ class RedditAdvert(models.Model):
                 extra={}
             )
             item_obj.save()
+
+    def find_duplicates(self, check=False) -> List["RedditAdvert"]:
+        if self.ad_type == RedditAdvertType.Selling:
+            dup_field = "offers"
+        elif self.ad_type == RedditAdvertType.Buying:
+            dup_field = "wants"
+        else:
+            return []
+        if self.extra is None:
+            return []
+
+        dup_canditates = RedditAdvert.objects.filter(
+            author=self.author,
+            ad_type=self.ad_type,
+            created_utc__lt=self.created_utc,
+        )
+        if not check:
+            dup_canditates = dup_canditates.filter(
+                is_duplicate=False
+            )
+        duplicates = []
+        for advert in dup_canditates:
+            if advert.extra is None:
+                continue
+            if duplicate_offers(self.extra[dup_field], advert.extra[dup_field]):
+                duplicates.append(advert)
+
+        return duplicates
+
+    def mark_duplicates(self):
+
+        duplicates = self.find_duplicates()
+        for advert in duplicates:
+            advert.is_duplicate = True
+            advert.save()
+        logger.info(f"[{self.reddit_id}] Marked {len(duplicates)} as duplicates")
+
+
+
