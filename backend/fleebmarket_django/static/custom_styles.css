@@ -75,3 +75,12 @@
     border-radius: 50px;
     background-color: lightgreen;
 }
+
+.blog-table {
+  width: auto !important;
+  margin: auto;
+}
+.blog-image {
+  margin: auto;
+  display: block;
+}

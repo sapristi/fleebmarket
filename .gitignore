@@ -5,3 +5,5 @@ services/nginx/conf-bg/aux
 __pycache__/
 .venv/
 .projectile
+.ipynb_checkpoints/
+*.pickle

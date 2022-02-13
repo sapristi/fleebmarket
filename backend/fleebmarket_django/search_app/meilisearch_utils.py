@@ -100,6 +100,9 @@ MAdvertsItemsIndex = MeiliIndex(
     filterableAttributes=['ad_type', "region", "country"]
 )
 
+def flush_all():
+    MAdvertsIndex.flush()
+    MAdvertsItemsIndex.flush()
 
 def initialise_meilisearch():
     MAdvertsIndex.initialize()

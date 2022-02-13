@@ -22,7 +22,7 @@ ROOT_DIR = BASE_DIR.parent
 
 DATA_DIR = Path(os.environ["DATA_DIR"])
 
-print("Dirs: root=", ROOT_DIR, "base=", BASE_DIR)
+print("Dirs: root=", ROOT_DIR, "base=", BASE_DIR, "data=", DATA_DIR)
 
 
 MOCK_DATA_DIR = ROOT_DIR / "mock_data"
@@ -231,28 +231,6 @@ LOGGING = {
         'handlers': ['console'],
         'level': 'WARNING',
     },
-    'loggers': {
-        'django': {
-            'handlers': ['console'],
-            'level': 'INFO',
-            'propagate': False,
-        },
-        'django.template': {
-            'handlers': ['console'],
-            'level': 'DEBUG',
-            'propagate': False,
-        },
-        'uvicorn': {
-            'propagate': False,
-            # 'handlers': ['null']
-            'handlers': ['console']
-        },
-        'search_app': {
-            'handlers': ['console'],
-            'level': 'INFO',
-            'propagate': False,
-        },
-    },
 }
 
 REDDIT_CREDS = {
@@ -290,4 +268,19 @@ REDDIT_BOT_CREDS = {
     "user_agent": os.environ["REDDIT_BOT_USER_AGENT"],
     "username": os.environ["REDDIT_BOT_USERNAME"],
     "password": os.environ["REDDIT_BOT_PASSWORD"],
+}
+
+
+MARKDOWN_DEUX_STYLES = {
+    "default": {
+        "extras": {
+            "code-friendly": None,
+            "tables": None,
+            "html-classes": {
+                "table": "blog-table table is-striped is-bordered is-hoverable",
+                "img": "image blog-image"
+            }
+        },
+        "safe_mode": "escape",
+    },
 }

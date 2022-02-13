@@ -23,7 +23,8 @@ class AutoEnum(ChoiceEnum):
 
 class ManagementLogging:
     def __init__(self):
-        settings.LOGGING['handlers']['journald']['identifier'] = "DjangoManagement"
+        if 'journald' in settings.LOGGING['handlers']:
+            settings.LOGGING['handlers']['journald']['identifier'] = "DjangoManagement"
         settings.LOGGING['root']['handlers'].append('console')
         logging.config.dictConfig(settings.LOGGING)
 
@@ -31,5 +32,12 @@ class ManagementLogging:
         return logging.getLogger("Management")
 
     def set_level_from_verbosity(self, verbosity):
-        level = logging.INFO if verbosity <= 1 else logging.DEBUG
+        if verbosity == 0:
+            level = logging.WARNING
+        elif verbosity == 1:
+            level = logging.INFO
+        else:
+            level = logging.DEBUG
+
         logging.getLogger().setLevel(level)
+        self.getLogger().setLevel(level)
