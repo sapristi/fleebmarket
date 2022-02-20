@@ -12,24 +12,24 @@ logger = ml.getLogger()
 
 class Command(BaseCommand):
     def add_arguments(self, parser):
-        parser.add_argument('--clear-meili', action="store_true")
-        parser.add_argument('--populate-from-db', action="store_true")
-        parser.add_argument('--update-indices', action="store_true")
+        parser.add_argument('--clear', action="store_true", help="Clear all data from meilisearch.")
+        parser.add_argument('--populate-from-db', action="store_true", help="Inserts data from postgres db into meilisearch.")
+        parser.add_argument('--setup-indices', action="store_true", help="Create and setup indices.")
 
     def handle(
             self,
-            clear_meili,
+            clear,
             populate_from_db,
-            update_indices,
+            setup_indices,
             verbosity,
             *args, **kwargs
     ):
         batch_size = 10000
         ml.set_level_from_verbosity(verbosity)
-        if clear_meili:
+        if clear:
             clear_meilisearch()
 
-        if update_indices:
+        if setup_indices:
             initialise_meilisearch()
 
         if populate_from_db:

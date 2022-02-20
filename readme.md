@@ -63,23 +63,3 @@ Example commands:
 | Get logs                                                | `journalctl --user-unit backend@blue.service -f`                                                                          |
 | Combine logs for both services, filter `scrapper` lines | `journalctl --user-unit -u backend@blue -u backend@green -f --since "2021-10-26 16:00" \| lnav -c ":filter-out scrapper"` |
 
-#### Databases
-
-Both databases (postgres and meilisearch) are running as docker services. For now they are not accessible to the `flu` user (if the need arises, I might go for a "rootless docker" setup, as described [here](https://docs.docker.com/engine/security/rootless/); seems unlikely, services have been running without issue for months ).
-
-#### Monitoring
-
-Two monitoring services are running on the server. To access those services, you should have configured your ssh connection as described in the first part, and have an ssh session running.
-
-- monitorix, used for long time monitoring. You can access the service at `http://localhost:7777/monitorix`.
-- netdata, for short term monitoring. You can access the service at `http://localhost:19999`.
-
-### Blue / Green deployment
-
-Two backend services are running at any time:
- - the **main** one is tied to https://fleebmarket.mmill.eu 
- - the **aux** one is tied to https://fleebmarket.mmill.eu:444
-
-
-When you are ready to merge a new feature, checkout you branch in the folder corresponding to the current **aux** instance, then restart the corresponding service. You can then see the result at https://fleebmarket.mmill.eu:444.
-Once the feature is merged, checkout the tag/develop branch in the **aux** instance, then run `sudo /fleebmarket_blue/services/swap.sh`. This will swap the **aux** and **main** instances, without disrupting current requests.
