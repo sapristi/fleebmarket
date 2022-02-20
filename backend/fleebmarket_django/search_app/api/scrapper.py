@@ -136,11 +136,11 @@ def create_batch(
 
         advert_db.mark_duplicates()
         # no parsing for now
-        # try:
-        #     advert_db.parse_items()
-        # except Exception as exc:
-        #     logger.error("Failed parsing advert [%s]: %s", advert_in.reddit_id, exc)
-        #     logger.exception(exc)
+        try:
+            advert_db.parse_items()
+        except Exception as exc:
+            logger.error("Failed parsing advert [%s]: %s", advert_in.reddit_id, exc)
+            logger.exception(exc)
 
         response.added.append(advert_in.reddit_id)
         added_adverts.append(advert_db)

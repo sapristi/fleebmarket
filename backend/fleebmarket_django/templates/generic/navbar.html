@@ -35,16 +35,36 @@
       </div>
       {% endif %}
 
-      <a class="navbar-item" href="{% url 'blog_index' %}">
-        Blog
-      </a>
-      <a class="navbar-item" href="{% url 'contact' %}">
-          Contact
-      </a>
+      <div class="navbar-item  has-dropdown is-hoverable">
+        <div class="navbar-item has-dropdown">
+          <a class="navbar-link" href="{% url 'blog_index' %}">
+            Blog
+          </a>
 
-      <a class="navbar-item" href="{% url 'about' %}">
-        About
-      </a>
+        </div>
+        <div class="navbar-dropdown">
+          <div class="navbar-item">
+            <a class="button" href="https://github.com/sapristi/fleebmarket">
+              <img src="{% static 'icons/GitHub.png' %}">
+            </a>
+          </div>
+          <div class="navbar-item">
+            <a class="button" href="https://discord.gg/XQXpsv7wEP">
+              <img src="{% static 'icons/Discord-Logo-Black.svg' %}">
+            </a>
+          </div>
+          <div class="navbar-item">
+            <a class="button" href="{% url 'about' %}">
+              About
+            </a>
+          </div>
+          <div class="navbar-item">
+            <a class="button" href="{% url 'contact' %}">
+              Contact
+            </a>
+          </div>
+        </div>
+      </div>
 
       {% if user.is_authenticated %}
 
@@ -71,11 +91,6 @@
         </div>
       </div>
       {% endif %}
-      <div class="navbar-item">
-        <a class="button" href="https://github.com/sapristi/fleebmarket">
-          <img src="{% static 'icons/GitHub.png' %}">
-        </a>
-      </div>
 
     </div>
   </div>
