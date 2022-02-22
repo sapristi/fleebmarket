@@ -81,9 +81,9 @@ class RedditAdvert(models.Model):
 
     def parse_items(self):
         from .reddit_advert_item import RedditAdvertItem # delayed import to avoid circular import issues
+        RedditAdvertItem.objects.filter(reddit_advert=self).delete()
         if not self.ad_type in (RedditAdvertType.Selling, RedditAdvertType.Buying, RedditAdvertType.Trading):
             return
-        RedditAdvertItem.objects.filter(reddit_advert=self).delete()
         items = parse(self.full_text)
         for item in items:
             if item.relevant_price == None:

@@ -135,7 +135,6 @@ def create_batch(
             continue
 
         advert_db.mark_duplicates()
-        # no parsing for now
         try:
             advert_db.parse_items()
         except Exception as exc:
