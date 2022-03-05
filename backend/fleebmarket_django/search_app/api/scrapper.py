@@ -93,6 +93,7 @@ def create_batch(
 ):
     response = CreateResponse()
     added_adverts = []
+    skipped = []
     for data_in in adverts:
         try:
             advert_in = RedditAdvertCreate.parse_obj(data_in)
@@ -105,6 +106,10 @@ def create_batch(
                 advert_in.ad_type is None or
                 advert_in.ad_type in models.RedditAdvertType.ignored()
         ):
+            continue
+
+        if models.RedditAdvert.objects.filter(reddit_id=advert_in.reddit_id).exists():
+            skipped.append(advert_in.reddit_id)
             continue
 
         try:
@@ -144,6 +149,8 @@ def create_batch(
         response.added.append(advert_in.reddit_id)
         added_adverts.append(advert_db)
 
+    if skipped:
+        logger.info("Skipped already existing: %s", skipped)
     logger.info("Received reddit adverts: %s", response)
 
     background_tasks.add_task(alert_task, added_adverts)

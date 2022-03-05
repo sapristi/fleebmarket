@@ -131,7 +131,7 @@ class RedditAdvert(models.Model):
         for advert in duplicates:
             advert.is_duplicate = True
             advert.save()
-        logger.info(f"[{self.reddit_id}] Marked {len(duplicates)} as duplicates")
+        logger.debug(f"[{self.reddit_id}] Marked {len(duplicates)} as duplicates")
 
 
 
