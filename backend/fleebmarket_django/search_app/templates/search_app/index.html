@@ -3,7 +3,7 @@
 
 {% block head_extra %}
 
-<link rel="stylesheet" href="{% static 'search_app/css/bundle.min.css' %}">
+<link rel="stylesheet" href="{% static react_css %}">
 
 
 {% endblock %}
@@ -17,6 +17,6 @@
 <div id="root"></div>
 
 {% block container_end %}   {% endblock %}
-<script src="{% static 'search_app/js/bundle.min.js' %}"> </script>
+<script src="{% static react_js %}"> </script>
 
 {% endblock %}

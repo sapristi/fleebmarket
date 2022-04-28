@@ -6,13 +6,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('alerts', '0004_remove_alert_match_count'),
+        ("alerts", "0004_remove_alert_match_count"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='alert',
-            name='sensitivity',
+            model_name="alert",
+            name="sensitivity",
             field=models.IntegerField(),
         ),
     ]

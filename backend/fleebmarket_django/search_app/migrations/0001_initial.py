@@ -7,22 +7,51 @@ class Migration(migrations.Migration):
 
     initial = True
 
-    dependencies = [
-    ]
+    dependencies = []
 
     operations = [
         migrations.CreateModel(
-            name='RedditAdvert',
+            name="RedditAdvert",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('reddit_id', models.CharField(db_index=True, max_length=20, unique=True)),
-                ('title', models.CharField(max_length=2000)),
-                ('ad_type', models.CharField(blank=True, choices=[('Selling', 'Selling'), ('Buying', 'Buying'), ('Trading', 'Trading'), ('Traded', 'Traded'), ('Sold', 'Sold'), ('Purchased', 'Purchased'), ('Artisan', 'Artisan'), ('Bulk', 'Bulk'), ('Group_buy', 'Group Buy')], db_index=True, max_length=20, null=True)),
-                ('created_utc', models.DateTimeField(db_index=True)),
-                ('full_text', models.TextField(blank=True)),
-                ('author', models.CharField(max_length=100)),
-                ('last_updated', models.DateTimeField(auto_now=True, db_index=True)),
-                ('extra', models.JSONField(blank=True, null=True)),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "reddit_id",
+                    models.CharField(db_index=True, max_length=20, unique=True),
+                ),
+                ("title", models.CharField(max_length=2000)),
+                (
+                    "ad_type",
+                    models.CharField(
+                        blank=True,
+                        choices=[
+                            ("Selling", "Selling"),
+                            ("Buying", "Buying"),
+                            ("Trading", "Trading"),
+                            ("Traded", "Traded"),
+                            ("Sold", "Sold"),
+                            ("Purchased", "Purchased"),
+                            ("Artisan", "Artisan"),
+                            ("Bulk", "Bulk"),
+                            ("Group_buy", "Group Buy"),
+                        ],
+                        db_index=True,
+                        max_length=20,
+                        null=True,
+                    ),
+                ),
+                ("created_utc", models.DateTimeField(db_index=True)),
+                ("full_text", models.TextField(blank=True)),
+                ("author", models.CharField(max_length=100)),
+                ("last_updated", models.DateTimeField(auto_now=True, db_index=True)),
+                ("extra", models.JSONField(blank=True, null=True)),
             ],
         ),
     ]

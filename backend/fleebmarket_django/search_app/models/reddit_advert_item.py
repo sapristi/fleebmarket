@@ -1,8 +1,8 @@
 import logging
+
 from django.db import models
 from django.db.models.fields.json import JSONField
 from django.utils.html import strip_tags
-
 from search_app.meilisearch_utils import MAdvertsItemsIndex
 
 from .reddit_advert import RedditAdvert
@@ -41,7 +41,4 @@ class RedditAdvertItem(models.Model):
 
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
-        MAdvertsItemsIndex.add_to_add(
-            self.serialize_meilisearch()
-        )
-
+        MAdvertsItemsIndex.add_to_add(self.serialize_meilisearch())

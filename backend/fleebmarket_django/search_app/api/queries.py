@@ -1,7 +1,8 @@
 import os
-from search_app import models
-from django.utils import timezone
 from datetime import timedelta
+
+from django.utils import timezone
+from search_app import models
 
 QUERY_adverts_by_score = """
 SELECT
@@ -47,14 +48,16 @@ def get_adverts_to_update(nb, min_score):
     max_update_age = os.environ.get("MAX_UPDATE_AGE", "1 month")
     rows = []
     # adverts with low score
-    rows.extend(models.RedditAdvert.objects.raw(
-        QUERY_adverts_by_score,
-        [max_update_age, min_score, nb]
-    ))
+    rows.extend(
+        models.RedditAdvert.objects.raw(
+            QUERY_adverts_by_score, [max_update_age, min_score, nb]
+        )
+    )
 
     return rows
 
+
 def get_adverts_without_ad_type():
     return models.RedditAdvert.objects.all().filter(
-        ad_type=None, created_utc__gte= timezone.now() - timedelta(hours=2)
+        ad_type=None, created_utc__gte=timezone.now() - timedelta(hours=2)
     )

@@ -1,8 +1,6 @@
-import {Token} from "marked";
-import {SearchResultLink} from '../types'
-const marked = require('marked');
+import { marked } from 'marked';
 
-export const mdparser = (text: string): string => {
+export const mdparser = (text): string => {
   let html = marked(text, []);
 
   html = html.replace(/<table>/g, '<table class="table is-striped is-hoverable">')
@@ -10,7 +8,7 @@ export const mdparser = (text: string): string => {
   return html;
 }
 
-export const get_timestamp_image = (links: SearchResultLink[]): SearchResultLink|undefined => {
+export const get_timestamp_image = (links) => {
     for (var link of links) {
         // console.log(link)
         if (link.title.toLowerCase().includes('time')) {

@@ -1,10 +1,10 @@
+from collections import defaultdict
+
 import pytest
 import search_app.meilisearch_utils
 
-from collections import defaultdict
 
 class MeiliIndMock(list):
-
     def add_documents(self, docs):
         self.extend(docs)
 
@@ -24,12 +24,15 @@ class MeiliIndMock(list):
         for doc_id in doc_ids:
             self.delete_document(doc_id)
 
+
 class Singleton(type):
     _instances = {}
+
     def __call__(cls):
         if cls not in cls._instances:
             cls._instances[cls] = super(Singleton, cls).__call__()
         return cls._instances[cls]
+
 
 class MeiliMock(defaultdict, metaclass=Singleton):
     def __init__(self):
@@ -40,6 +43,7 @@ class MeiliMock(defaultdict, metaclass=Singleton):
 
     def __repr__(self):
         return str(dict(self))
+
 
 @pytest.fixture(autouse=True)
 def meili_mock(monkeypatch):

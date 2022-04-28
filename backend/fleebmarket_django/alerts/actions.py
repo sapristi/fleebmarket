@@ -1,9 +1,11 @@
 from collections import defaultdict
-from fuzzywuzzy import fuzz
+
 from django.template.loader import render_to_string
+from fuzzywuzzy import fuzz
+from search_app.models import RedditAdvert
 
 from .models import Alert, AlertAdType, Region
-from search_app.models import RedditAdvert
+
 
 def score_advert(terms: list[str], title: str, body: str):
     ratios = [
@@ -32,12 +34,10 @@ def find_alerts(adverts: list[RedditAdvert]):
 
     return to_send
 
+
 def alert_task(adverts: list[RedditAdvert]):
     to_send = find_alerts(adverts)
 
     for user, data in to_send.items():
         message = render_to_string("alerts/messages/alert", {"data": data})
-        user.send_message(
-            "Fleebmarket: a post matched one of your alerts",
-            message
-        )
+        user.send_message("Fleebmarket: a post matched one of your alerts", message)

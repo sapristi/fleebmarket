@@ -20,7 +20,7 @@ class ExtractedItem(BaseModel):
         if all((price.striked for price in self.prices)):
             return True
         sold_tokens = find_in_tree(find_sold_token_in_text)(self.ast)
-        return len(sold_tokens) > 0
+        return any(sold_tokens)
 
     @property
     def relevant_price(self) -> Optional[PriceTag]:

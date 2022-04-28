@@ -1,10 +1,11 @@
 from utils import ChoiceEnum
 
+
 class RedditAdvertType(str, ChoiceEnum):
     Selling = "Selling"
     Buying = "Buying"
-    Trading = 'Trading'
-    Traded = 'Traded'
+    Trading = "Trading"
+    Traded = "Traded"
     Sold = "Sold"
     Purchased = "Purchased"
     Artisan = "Artisan"
@@ -28,4 +29,3 @@ class RedditAdvertType(str, ChoiceEnum):
             RedditAdvertType.Giveaway,
             RedditAdvertType.Any,
         ]
-
