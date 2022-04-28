@@ -1,30 +1,36 @@
-from more_itertools import ichunked
-import logging
 from utils import ManagementLogging
 
 ml = ManagementLogging()
 
-from search_app.models import RedditAdvert
 from django.core.management.base import BaseCommand
-from ...meilisearch_utils import clear_meilisearch, initialise_meilisearch, meili_client
+from search_app.meilisearch_utils import (
+    MAdvertsIndex,
+    MAdvertsItemsIndex,
+    clear_meilisearch,
+    initialise_meilisearch,
+)
+from search_app.models import RedditAdvert, RedditAdvertItem
 
 logger = ml.getLogger()
 
+
 class Command(BaseCommand):
     def add_arguments(self, parser):
-        parser.add_argument('--clear', action="store_true", help="Clear all data from meilisearch.")
-        parser.add_argument('--populate-from-db', action="store_true", help="Inserts data from postgres db into meilisearch.")
-        parser.add_argument('--setup-indices', action="store_true", help="Create and setup indices.")
+        parser.add_argument(
+            "--clear", action="store_true", help="Clear all data from meilisearch."
+        )
+        parser.add_argument(
+            "--populate-from-db",
+            action="store_true",
+            help="Inserts data from postgres db into meilisearch.",
+        )
+        parser.add_argument(
+            "--setup-indices", action="store_true", help="Create and setup indices."
+        )
 
     def handle(
-            self,
-            clear,
-            populate_from_db,
-            setup_indices,
-            verbosity,
-            *args, **kwargs
+        self, clear, populate_from_db, setup_indices, verbosity, *args, **kwargs
     ):
-        batch_size = 10000
         ml.set_level_from_verbosity(verbosity)
         if clear:
             clear_meilisearch()
@@ -36,15 +42,18 @@ class Command(BaseCommand):
             initialise_meilisearch()
             adverts = RedditAdvert.objects.all()
             logger.info("Found %s adverts in db", len(adverts))
-            ichunks = ichunked(adverts, batch_size)
-            for i, ichunk in enumerate(ichunks):
-                logger.info(f"Fetching {batch_size} ads from db...")
-                to_update = [
-                    add_meili for add_meili in
-                    (ad.serialize_meilisearch() for ad in ichunk)
-                    if add_meili is not None
-                ]
-                logger.info(f"Inserting {len(to_update)} ads in meilisearch.")
-                if len(to_update) > 0:
-                    meili_client.index("Adverts").add_documents(to_update)
+            for ad in adverts:
+                ad_meili = ad.serialize_meilisearch()
+                if ad_meili is not None:
+                    MAdvertsIndex.add_to_add(ad_meili)
+            MAdvertsIndex.flush()
+            logger.info("Adverts fed to meilisearch")
+
+            advert_items = RedditAdvertItem.objects.all()
+            logger.info("Found %s advert_items in db", len(advert_items))
+            for ad_item in advert_items:
+                ad_item_meili = ad_item.serialize_meilisearch()
+                if ad_item_meili is not None:
+                    MAdvertsItemsIndex.add_to_add(ad_item_meili)
+            MAdvertsItemsIndex.flush()
             logger.info("Adverts fed to meilisearch")

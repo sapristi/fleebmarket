@@ -6,13 +6,34 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('search_app', '0002_auto_20210803_1620'),
+        ("search_app", "0002_auto_20210803_1620"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='redditadvert',
-            name='ad_type',
-            field=models.CharField(blank=True, choices=[('Selling', 'Selling'), ('Buying', 'Buying'), ('Trading', 'Trading'), ('Traded', 'Traded'), ('Sold', 'Sold'), ('Purchased', 'Purchased'), ('Artisan', 'Artisan'), ('Bulk', 'Bulk'), ('Interest_check', 'Interest Check'), ('Vendor', 'Vendor'), ('Group_buy', 'Group Buy'), ('Service', 'Service'), ('Meta', 'Meta'), ('Giveaway', 'Giveaway')], db_index=True, max_length=20, null=True),
+            model_name="redditadvert",
+            name="ad_type",
+            field=models.CharField(
+                blank=True,
+                choices=[
+                    ("Selling", "Selling"),
+                    ("Buying", "Buying"),
+                    ("Trading", "Trading"),
+                    ("Traded", "Traded"),
+                    ("Sold", "Sold"),
+                    ("Purchased", "Purchased"),
+                    ("Artisan", "Artisan"),
+                    ("Bulk", "Bulk"),
+                    ("Interest_check", "Interest Check"),
+                    ("Vendor", "Vendor"),
+                    ("Group_buy", "Group Buy"),
+                    ("Service", "Service"),
+                    ("Meta", "Meta"),
+                    ("Giveaway", "Giveaway"),
+                ],
+                db_index=True,
+                max_length=20,
+                null=True,
+            ),
         ),
     ]

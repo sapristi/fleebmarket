@@ -1,4 +1,5 @@
 import os
+
 env = os.environ.get("APP_ENV", "dev")
 
 print("LOADING SETTINGS", env)

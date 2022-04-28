@@ -6,14 +6,14 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('search_app', '0001_initial'),
+        ("search_app", "0001_initial"),
     ]
 
     operations = [
         # Commented out because makes test bug
-#         migrations.RunSQL(
-#             """
-# INSERT INTO search_app_redditadvert (SELECT * from search_ads_redditadvert)
-#             """
-#         )
+        #         migrations.RunSQL(
+        #             """
+        # INSERT INTO search_app_redditadvert (SELECT * from search_ads_redditadvert)
+        #             """
+        #         )
     ]

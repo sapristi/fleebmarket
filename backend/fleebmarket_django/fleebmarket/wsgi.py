@@ -13,8 +13,8 @@ from pathlib import Path  # Python 3.6+ only
 from django.core.wsgi import get_wsgi_application
 from dotenv import load_dotenv
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'fleebmarket.settings')
-env_path = Path(__file__).absolute().parent.parent.parent / '.env'
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "fleebmarket.settings")
+env_path = Path(__file__).absolute().parent.parent.parent / ".env"
 print("Loading .env from", env_path)
 load_dotenv(dotenv_path=env_path)
 

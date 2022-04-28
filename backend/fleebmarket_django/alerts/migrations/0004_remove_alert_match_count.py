@@ -6,12 +6,12 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('alerts', '0003_alertmatch'),
+        ("alerts", "0003_alertmatch"),
     ]
 
     operations = [
         migrations.RemoveField(
-            model_name='alert',
-            name='match_count',
+            model_name="alert",
+            name="match_count",
         ),
     ]

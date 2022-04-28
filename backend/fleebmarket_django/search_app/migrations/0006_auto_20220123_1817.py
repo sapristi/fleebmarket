@@ -6,18 +6,18 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('search_app', '0005_redditadvertitem'),
+        ("search_app", "0005_redditadvertitem"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='redditadvert',
-            name='is_duplicate',
+            model_name="redditadvert",
+            name="is_duplicate",
             field=models.BooleanField(db_index=True, default=False),
         ),
         migrations.AlterField(
-            model_name='redditadvert',
-            name='author',
+            model_name="redditadvert",
+            name="author",
             field=models.CharField(db_index=True, max_length=100),
         ),
     ]

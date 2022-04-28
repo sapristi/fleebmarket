@@ -1,20 +1,13 @@
 import React from "react";
 import {
-  atom,
-  selector,
   useRecoilState,
   useRecoilValue,
 } from 'recoil';
-import {
-  ResultItemPreview, ResultItemModal, Mapping
-} from 'components/resultItems';
-import {SearchResultItem} from 'types';
-import { asyncDebounce } from "utils";
-import { searchInputState, searchResultsState, scrolledBottomTriggerState, uiPrefsState } from "atoms";
+import { searchInputState,  scrolledBottomTriggerState, uiPrefsState } from "atoms";
 import { useSearchAppend, useSearchReplace } from 'hooks/search';
+import { useSearchItemAppend, useSearchItemReplace } from 'hooks/search_item';
 import { AdTypes } from 'common/defs';
 
-const axios = require('axios').default;
 
 
 const Regions = {
@@ -23,6 +16,11 @@ const Regions = {
   EU: "EU",
   OTHER: "OTHER",
   US: "US"
+}
+const SoldStatus = {
+  Unsold: "false",
+  Sold: "true",
+  Any: "",
 }
 
 
@@ -43,7 +41,91 @@ export const ResultsFetcher = () => {
   return null;
 };
 
-export const SearchBox = ({}) => {
+
+
+export const ItemsResultsFetcher = () => {
+  const scrolledTrigger = useRecoilValue(scrolledBottomTriggerState);
+  const searchItemAppend = useSearchItemAppend();
+  const searchItemReplace = useSearchItemReplace();
+  const searchInput = useRecoilValue(searchInputState);
+
+  React.useEffect(() => {
+    searchItemAppend();
+  }, [scrolledTrigger]);
+
+  React.useEffect( ()=> {
+    searchItemReplace();
+  }, [searchInput]);
+  return null;
+};
+
+const AdTypeSelect = ({ad_type, handleInputChange}) => {
+  return (
+  <div>
+    <label className="label">Advert type</label>
+    <div className="select">
+      <select value={ad_type} onChange={handleInputChange("ad_type")}>
+        {
+          Object.entries(AdTypes).map(([key, {display}]) =>
+            <option key={key} value={key}>{display}</option>)
+        }
+      </select>
+    </div>
+  </div>
+  )
+}
+
+const RegionSelect = ({region, handleInputChange}) => {
+  return (
+    <div>
+      <label className="label">Region</label>
+      <div className="select">
+        <select value={region} onChange={handleInputChange("region")}>
+          {
+            Object.entries(Regions).map(([key, value]) =>
+              <option key={value} value={value}>{key}</option>)
+          }
+        </select>
+      </div>
+    </div>
+  )
+}
+
+
+const SoldStatusSelect = ({sold, handleInputChange}) => {
+  return (
+    <div>
+      <label className="label">Sold</label>
+      <div className="select">
+        <select value={sold} onChange={handleInputChange("sold")}>
+          {
+            Object.entries(SoldStatus).map(([key, value]) =>
+              <option key={value} value={value}>{key}</option>)
+          }
+        </select>
+      </div>
+    </div>
+  )
+}
+
+
+const ShowPreviewToggle = () => {
+  const [uiPrefs, setUIPrefs] = useRecoilState(uiPrefsState);
+  const handleShowImages = (event) => {
+    if (event.type === "change") {
+      setUIPrefs(prev => ({...prev, showImages: !prev.showImages}));
+    }
+  };
+
+  return (
+    <div className="field">
+      <input id="switchRoundedOutlinedDefault" type="checkbox" name="switchRoundedOutlinedDefault" className="switch is-rounded is-outlined is-rtl" checked={uiPrefs.showImages} onChange={handleShowImages}/>
+      <label htmlFor="switchRoundedOutlinedDefault">Show preview</label>
+    </div>
+  )
+}
+
+export const SearchBox = ({search_type}) => {
   const [input, setInput] = useRecoilState(searchInputState);
   const [uiPrefs, setUIPrefs] = useRecoilState(uiPrefsState);
   const handleInputChange = (key) => (event) => {
@@ -52,11 +134,6 @@ export const SearchBox = ({}) => {
       ...prev,
       [key]: value,
     }));
-  };
-  const handleShowImages = (event) => {
-    if (event.type === "change") {
-      setUIPrefs(prev => ({...prev, showImages: !prev.showImages}));
-    }
   };
 
   return (
@@ -69,33 +146,19 @@ export const SearchBox = ({}) => {
                placeholder="search..."
         />
       </div>
-
-      <div>
-        <label className="label">Advert type</label>
-        <div className="select">
-          <select value={input.ad_type} onChange={handleInputChange("ad_type")}>
-            {
-              Object.entries(AdTypes).map(([key, {display}]) =>
-                <option key={key} value={key}>{display}</option>)
-            }
-          </select>
-        </div>
-      </div>
-      <div>
-        <label className="label">Region</label>
-        <div className="select">
-          <select value={input.region} onChange={handleInputChange("region")}>
-            {
-              Object.entries(Regions).map(([key, value]) =>
-                <option key={value} value={value}>{key}</option>)
-            }
-          </select>
-        </div>
-      </div>
-    <div className="field">
-      <input id="switchRoundedOutlinedDefault" type="checkbox" name="switchRoundedOutlinedDefault" className="switch is-rounded is-outlined is-rtl" checked={uiPrefs.showImages} onChange={handleShowImages}/>
-      <label htmlFor="switchRoundedOutlinedDefault">Show preview</label>
-    </div>
+      {
+        search_type === "advert" &&
+          <AdTypeSelect ad_type={input.ad_type} handleInputChange={handleInputChange}/>
+      }
+      <RegionSelect region={input.region} handleInputChange={handleInputChange}/>
+      {
+      search_type === "advert_item" &&
+          <SoldStatusSelect sold={input.sold}  handleInputChange={handleInputChange}/>
+      }
+      {
+        search_type === "advert" &&
+          <ShowPreviewToggle/>
+      }
     </div>
   );
 };

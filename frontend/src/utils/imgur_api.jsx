@@ -1,6 +1,6 @@
 const axios = require('axios').default;
 
-export const get_href_type = (href: string) => {
+export const get_href_type = (href) => {
     const url = new URL(href)
     /* console.log(url) */
     if (url.host.includes("imgur")) {
@@ -8,7 +8,7 @@ export const get_href_type = (href: string) => {
     }
 }
 
-const get_imgur_image = (url: URL ) : string => {
+const get_imgur_image = (url) => {
     const path = url.pathname.split("/").filter(x => x)
     console.log(path)
     if (path.length === 1) {

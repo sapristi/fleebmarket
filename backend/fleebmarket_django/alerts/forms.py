@@ -3,15 +3,19 @@ from utils import ModelForm
 
 from .models import Alert
 
+
 class AlertForm(ModelForm):
-    sensitivity = forms.IntegerField(min_value=0, max_value=100,widget=forms.NumberInput(attrs={'class': "input"}))
+    sensitivity = forms.IntegerField(
+        min_value=0, max_value=100, widget=forms.NumberInput(attrs={"class": "input"})
+    )
+
     class Meta:
         model = Alert
         fields = ["terms", "ad_type", "region", "sensitivity", "user"]
         widgets = {
-            "terms": forms.TextInput(attrs={'class': "input"}),
-            "ad_type": forms.Select(attrs={'class': "select"}),
-            "region": forms.Select(attrs={'class': "select"}),
+            "terms": forms.TextInput(attrs={"class": "input"}),
+            "ad_type": forms.Select(attrs={"class": "select"}),
+            "region": forms.Select(attrs={"class": "select"}),
         }
 
 

@@ -9,28 +9,27 @@ https://docs.djangoproject.com/en/3.1/howto/deployment/asgi/
 
 import os
 
-from django.core.asgi import get_asgi_application
 from django.conf import settings
+from django.core.asgi import get_asgi_application
+
 from . import runtime_setup
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'fleebmarket.settings')
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "fleebmarket.settings")
 
 application = get_asgi_application()
 
 
-
-from fastapi import FastAPI, APIRouter
+from fastapi import APIRouter, FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from search_app.api import scrapper, search
+from search_app.api import scrapper, search, search_item
 
 router = APIRouter(prefix="/api")
 router.include_router(scrapper.router)
 router.include_router(search.router)
+router.include_router(search_item.router)
 
 
-app = FastAPI(
-    title="fleebmarket", openapi_url=f"/openapi.json"
-)
+app = FastAPI(title="fleebmarket", openapi_url=f"/openapi.json")
 
 if settings.DEBUG:
     app.add_middleware(

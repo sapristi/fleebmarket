@@ -1,4 +1,3 @@
-import React from "react";
 import {
   useSetRecoilState,
   useRecoilState,
@@ -33,6 +32,7 @@ export const useSearchAppend = () => {
   const [searchResults, setSearchResults] = useRecoilState(searchResultsState);
   const setResultsEnd = useSetRecoilState(resultsEndState);
 
+  console.log("Search hook")
   const resFun= () => doSearch(searchInput, searchResults.length)
         .then(
           res => {
@@ -55,6 +55,7 @@ export const useSearchReplace = () => {
   const searchInput = useRecoilValue(searchInputState);
   const setSearchResults = useSetRecoilState(searchResultsState);
   const setResultsEnd = useSetRecoilState(resultsEndState);
+
 
   const resFun = () => doSearch(searchInput, 0).then(res => {
     setResultsEnd(res.length===0);

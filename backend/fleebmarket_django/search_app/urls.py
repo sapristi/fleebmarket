@@ -1,10 +1,17 @@
-from django.urls import path, include
+from django.conf import settings
 from django.shortcuts import render
+from django.urls import include, path
+
 
 def index(request):
-    return render(request, 'search_app/index.html')
+    context = {
+        "react_js": settings.REACT_JS_PATH,
+        "react_css": settings.REACT_CSS_PATH,
+    }
+    return render(request, "search_app/index.html", context)
+
 
 app_name = "search_app"
 urlpatterns = [
-    path('', index, name="index"),
+    path("", index, name="index"),
 ]

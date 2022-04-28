@@ -52,11 +52,11 @@ Thanks in advance!
     ast = md_to_ast(md_str)
     items = list(extract_text_items(ast))
     for item in items:
-        print(item)
+        print(item.sold)
     assert len(items) == 2
+    raise
 
-
-def test_text_extraction2():
+def test_text_extraction3():
     md_str = """
 
 [timestamp](https://imgur.com/a/ZZvUW5M)

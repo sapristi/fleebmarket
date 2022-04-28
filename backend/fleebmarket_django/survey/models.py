@@ -29,8 +29,9 @@ questions
 
 
 from django.db import models
-from utils import ChoiceEnum
 from multiselectfield import MultiSelectField
+from utils import ChoiceEnum
+
 
 class Parts(ChoiceEnum):
     full = "Full keyboards"
@@ -38,6 +39,7 @@ class Parts(ChoiceEnum):
     keycaps = "Keycaps (including artisan)"
     switches = "Switches"
     other = "Other parts"
+
 
 class Period(ChoiceEnum):
     never = "Never"
@@ -78,4 +80,3 @@ class FirstSurveyData(models.Model):
     # not used in practice
     def get_absolute_url(self):
         pass
-
