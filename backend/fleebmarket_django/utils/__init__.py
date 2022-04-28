@@ -1,6 +1,7 @@
 import logging
 import logging.config
 from enum import Enum
+
 from django import forms
 from django.conf import settings
 
@@ -23,9 +24,9 @@ class AutoEnum(ChoiceEnum):
 
 class ManagementLogging:
     def __init__(self):
-        if 'journald' in settings.LOGGING['handlers']:
-            settings.LOGGING['handlers']['journald']['identifier'] = "DjangoManagement"
-        settings.LOGGING['root']['handlers'].append('console')
+        if "journald" in settings.LOGGING["handlers"]:
+            settings.LOGGING["handlers"]["journald"]["identifier"] = "DjangoManagement"
+        settings.LOGGING["root"]["handlers"].append("console")
         logging.config.dictConfig(settings.LOGGING)
 
     def getLogger(self):

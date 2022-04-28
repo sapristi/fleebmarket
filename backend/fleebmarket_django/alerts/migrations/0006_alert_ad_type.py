@@ -6,14 +6,25 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('alerts', '0005_alter_alert_sensitivity'),
+        ("alerts", "0005_alter_alert_sensitivity"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='alert',
-            name='ad_type',
-            field=models.CharField(choices=[('Selling', 'RedditAdvertType.Selling'), ('Buying', 'RedditAdvertType.Buying'), ('Trading', 'RedditAdvertType.Trading'), ('Giveaway', 'RedditAdvertType.Giveaway'), ('Group_buy', 'RedditAdvertType.Group_buy'), ('Any', 'RedditAdvertType.Any')], default='Selling', max_length=20),
+            model_name="alert",
+            name="ad_type",
+            field=models.CharField(
+                choices=[
+                    ("Selling", "RedditAdvertType.Selling"),
+                    ("Buying", "RedditAdvertType.Buying"),
+                    ("Trading", "RedditAdvertType.Trading"),
+                    ("Giveaway", "RedditAdvertType.Giveaway"),
+                    ("Group_buy", "RedditAdvertType.Group_buy"),
+                    ("Any", "RedditAdvertType.Any"),
+                ],
+                default="Selling",
+                max_length=20,
+            ),
             preserve_default=False,
         ),
     ]

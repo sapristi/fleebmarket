@@ -15,3 +15,17 @@ def parse(md_str: str) -> list[ExtractedItem]:
         *text_items,
         *table_items
     ]
+
+def parse_debug(md_str) -> list[ExtractedItem]:
+
+    ast = md_to_ast(md_str)
+    print("AST is", ast)
+    text_items = list(extract_text_items(ast))
+    print("Text items", text_items)
+    table_items = list(extract_table_items(ast))
+    print("Table items", table_items)
+
+    return [
+        *text_items,
+        *table_items
+    ]

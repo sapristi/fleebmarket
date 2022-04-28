@@ -62,3 +62,8 @@ export const uiPrefsState = atom({
     storePrefs
   ]
 });
+
+export const selectedCardState = atom({
+  key: "selectedCard",
+  default: null
+})

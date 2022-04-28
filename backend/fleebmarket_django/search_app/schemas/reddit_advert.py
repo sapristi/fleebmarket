@@ -1,7 +1,8 @@
-from pydantic import BaseModel
+import logging
 from datetime import datetime
 from typing import Any, Optional
-import logging
+
+from pydantic import BaseModel
 from search_app.models import RedditAdvertType
 
 logger = logging.getLogger(__name__)
@@ -18,13 +19,16 @@ class RedditAdvertBase(BaseModel):
     def __str__(self):
         return f"[{self.reddit_id}] ({self.full_text})"
 
+
 class RedditAdvertCreate(RedditAdvertBase):
     pass
+
 
 class RedditAdvertUpdate(BaseModel):
     reddit_id: str
     ad_type: Optional[RedditAdvertType]
     full_text: str
+
 
 class RedditAdvertDBBase(RedditAdvertBase):
     id: int
@@ -38,10 +42,13 @@ class RedditAdvertDBBase(RedditAdvertBase):
     class Config:
         orm_mode = True
 
+
 class RedditAdvertDBLight(RedditAdvertDBBase):
     pass
 
+
 class RedditAdvertDB(RedditAdvertDBBase):
+    type: str = "advert"
     last_updated: datetime
     extra: dict[str, Any]
 

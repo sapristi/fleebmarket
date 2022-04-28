@@ -1,20 +1,21 @@
-from pydantic import BaseModel
-from typing import Any, Optional
-import re
 import logging
+import re
+from typing import Any, Optional
+
 import mistune
-
+from pydantic import BaseModel
 from search_app.models import RedditAdvertType
-
 
 logger = logging.getLogger(__name__)
 markdown_ast = mistune.create_markdown(renderer=mistune.AstRenderer())
+
 
 class ParsedTitle(BaseModel):
     region: str
     country: str
     offers: str
     wants: str
+
 
 def parse_mechmarket_title(title):
     try:
@@ -31,15 +32,14 @@ def parse_mechmarket_title(title):
             country = split_country[1]
         else:
             region = "OTHER"
-        return ParsedTitle(
-            country=country, region=region,
-            offers=offers, wants=wants
-        )
+        return ParsedTitle(country=country, region=region, offers=offers, wants=wants)
     except Exception:
         return None
 
+
 class ParsedTitleSimple(BaseModel):
     title_stripped: str
+
 
 def parse_mechmarket_title_simple(title):
     m = re.match(r"\[(.*?)\](.*)", title)
@@ -47,9 +47,11 @@ def parse_mechmarket_title_simple(title):
         return None
     return ParsedTitleSimple(title_stripped=m.group(2).strip())
 
+
 class Link(BaseModel):
     href: str
     title: Optional[str]
+
 
 def extract_md_ast(ast, links):
     node_text = ast.get("text", " ")
@@ -64,10 +66,14 @@ def extract_md_ast(ast, links):
         links.append(Link(href=ast["link"], title=node_text.strip(" \n")))
     return node_text
 
+
 url_regex = r"(?i)\b((?:https?://|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'\".,<>?«»“”‘’]))"
+
+
 def extract_links_from_text(text: str):
     matches = re.findall(url_regex, text)
     return [match[0] for match in matches]
+
 
 class ParsedBody(BaseModel):
     text: str
@@ -77,23 +83,27 @@ class ParsedBody(BaseModel):
 def parse_mechmarket_body(body):
     body_ast = markdown_ast(body)
     links = []
-    text = extract_md_ast({"children": body_ast, "type": 'root'}, links)
+    text = extract_md_ast({"children": body_ast, "type": "root"}, links)
     text = text.replace("&#x200B", "").replace("\x00", "").strip(" \n")
 
     links_hrefs = [l.href for l in links]
     text_links_all = extract_links_from_text(text)
-    text_links_extra = [ link for link in text_links_all if link not in links_hrefs ]
+    text_links_extra = [link for link in text_links_all if link not in links_hrefs]
     links.extend([Link(href=l, title=None) for l in text_links_extra])
 
     return ParsedBody(text=text, links=links)
 
 
-def parse_mechmarket_advert(ad_type: RedditAdvertType, title: str, body: str) -> Optional[dict[str, Any]]:
+def parse_mechmarket_advert(
+    ad_type: RedditAdvertType, title: str, body: str
+) -> Optional[dict[str, Any]]:
     if ad_type in [
-            RedditAdvertType.Selling, RedditAdvertType.Buying,
-            RedditAdvertType.Sold, RedditAdvertType.Purchased,
-            RedditAdvertType.Trading,
-            RedditAdvertType.Traded,
+        RedditAdvertType.Selling,
+        RedditAdvertType.Buying,
+        RedditAdvertType.Sold,
+        RedditAdvertType.Purchased,
+        RedditAdvertType.Trading,
+        RedditAdvertType.Traded,
     ]:
         parsed_title = parse_mechmarket_title(title)
     else:
@@ -103,7 +113,4 @@ def parse_mechmarket_advert(ad_type: RedditAdvertType, title: str, body: str) ->
         return None
     parsed_body = parse_mechmarket_body(body)
 
-    return {
-        **parsed_title.dict(),
-        **parsed_body.dict()
-    }
+    return {**parsed_title.dict(), **parsed_body.dict()}

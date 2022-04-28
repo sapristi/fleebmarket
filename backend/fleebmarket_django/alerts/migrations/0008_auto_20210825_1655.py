@@ -6,18 +6,37 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('alerts', '0007_alert_region'),
+        ("alerts", "0007_alert_region"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='alert',
-            name='ad_type',
-            field=models.CharField(choices=[('Selling', 'RedditAdvertType.Selling'), ('Buying', 'RedditAdvertType.Buying'), ('Trading', 'RedditAdvertType.Trading'), ('Giveaway', 'RedditAdvertType.Giveaway'), ('Group_buy', 'RedditAdvertType.Group_buy'), ('Any', 'RedditAdvertType.Any')], max_length=30),
+            model_name="alert",
+            name="ad_type",
+            field=models.CharField(
+                choices=[
+                    ("Selling", "RedditAdvertType.Selling"),
+                    ("Buying", "RedditAdvertType.Buying"),
+                    ("Trading", "RedditAdvertType.Trading"),
+                    ("Giveaway", "RedditAdvertType.Giveaway"),
+                    ("Group_buy", "RedditAdvertType.Group_buy"),
+                    ("Any", "RedditAdvertType.Any"),
+                ],
+                max_length=30,
+            ),
         ),
         migrations.AlterField(
-            model_name='alert',
-            name='region',
-            field=models.CharField(choices=[('EU', 'EU'), ('US', 'US'), ('CA', 'CA'), ('OTHER', 'OTHER'), ('Any', 'Any')], max_length=30),
+            model_name="alert",
+            name="region",
+            field=models.CharField(
+                choices=[
+                    ("EU", "EU"),
+                    ("US", "US"),
+                    ("CA", "CA"),
+                    ("OTHER", "OTHER"),
+                    ("Any", "Any"),
+                ],
+                max_length=30,
+            ),
         ),
     ]

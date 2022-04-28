@@ -3,17 +3,17 @@ import subprocess
 
 from html2image import Html2Image
 
-from .static import texts, template, palettes
+from .static import palettes, template, texts
+
 
 def get_html():
     text = random.choice(texts)
     palette = random.choice(palettes)
     html = template.format(
-        background_color=palette[0],
-        text_color=palette[3],
-        text = text
+        background_color=palette[0], text_color=palette[3], text=text
     )
     return html
+
 
 def make_hti(size, output_path):
 
@@ -21,8 +21,9 @@ def make_hti(size, output_path):
         chrome_path=os.environ.get("CHROME_PATH", "/usr/bin/chromium"),
         size=size,
         output_path=output_path,
-        custom_flags=["--disable-gpu"]
+        custom_flags=["--disable-gpu"],
     )
+
 
 def generate_image(chrome_path, size, output_path, name):
 
@@ -32,9 +33,7 @@ def generate_image(chrome_path, size, output_path, name):
     palette = random.choice(palettes)
 
     html = template.format(
-        background_color=palette[0],
-        text_color=palette[3],
-        text = text
+        background_color=palette[0], text_color=palette[3], text=text
     )
 
     hti.screenshot(html_str=html, save_as=name)

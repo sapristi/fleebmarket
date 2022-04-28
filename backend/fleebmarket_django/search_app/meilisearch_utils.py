@@ -1,5 +1,8 @@
-import logging, pathlib, os
+import logging
+import os
+import pathlib
 from typing import Iterable
+
 import meilisearch
 from django.conf import settings
 from pydantic import BaseModel
@@ -10,23 +13,25 @@ current_dir = pathlib.Path(__file__).parent.absolute()
 with open(current_dir / "stopwords") as f:
     stop_words = f.readlines()
 
-meilisearch_host = os.environ['MEILISEARCH_HOST']
+meilisearch_host = os.environ["MEILISEARCH_HOST"]
 meili_client = meilisearch.Client(meilisearch_host, timeout=5)
 
 ranking_default = [
-  "exactness",
-  "typo",
-  "attribute",
-  "proximity",
-  "words",
-  "created_utc:desc",
+    "exactness",
+    "typo",
+    "attribute",
+    "proximity",
+    "words",
+    "created_utc:desc",
 ]
+
 
 class MeiliIndexSettings(BaseModel):
     searchableAttributes: list[str]
     # displayedAttributes: list[str] = []
     stopWords: list[str] = stop_words
     rankingRules: list[str] = ranking_default
+
 
 class MeiliIndex(BaseModel):
     name: str
@@ -37,7 +42,7 @@ class MeiliIndex(BaseModel):
     # do not initialize those fields; they are used by the instances
     to_add: list[dict] = []
     to_update: list[dict] = []
-    to_delete: list[dict] = []
+    to_delete: list[str] = []
 
     def client(self):
         return meili_client.index(self.name)
@@ -47,7 +52,7 @@ class MeiliIndex(BaseModel):
         existing_index_names = [index.uid for index in existing_indexes]
         if not self.name in existing_index_names:
             logger.info(f"Creating index {self.name}")
-            meili_client.create_index(self.name, {'primaryKey': self.pkey})
+            meili_client.create_index(self.name, {"primaryKey": self.pkey})
         else:
             logger.info(f"Index {self.name} already exists")
 
@@ -77,32 +82,27 @@ class MeiliIndex(BaseModel):
             self.client().delete_documents(self.to_delete)
             self.to_delete = []
 
+
 MAdvertsIndex = MeiliIndex(
     name="Adverts",
-    settings=MeiliIndexSettings(searchableAttributes=[
-        'offers',
-        'wants',
-        'text',
-        'country',
-        'region'
-    ]),
+    settings=MeiliIndexSettings(
+        searchableAttributes=["offers", "wants", "text", "country", "region"]
+    ),
     pkey="reddit_id",
-    filterableAttributes=['ad_type', "region", "country"]
+    filterableAttributes=["ad_type", "region", "country"],
 )
 MAdvertsItemsIndex = MeiliIndex(
     name="AdvertItems",
-    settings=MeiliIndexSettings(searchableAttributes=[
-        'text',
-        'country',
-        'region'
-    ]),
+    settings=MeiliIndexSettings(searchableAttributes=["text", "country", "region"]),
     pkey="pkey",
-    filterableAttributes=['ad_type', "region", "country"]
+    filterableAttributes=["ad_type", "region", "sold"],
 )
+
 
 def flush_all():
     MAdvertsIndex.flush()
     MAdvertsItemsIndex.flush()
+
 
 def initialise_meilisearch():
     MAdvertsIndex.initialize()
@@ -119,4 +119,3 @@ def clear_meilisearch():
     logger.info("Deleting indices %s", index_names)
     for index_name in index_names:
         meili_client.index(index_name).delete()
-

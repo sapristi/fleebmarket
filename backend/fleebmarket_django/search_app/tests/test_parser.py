@@ -1,8 +1,9 @@
-from search_app.models.parse import parse_mechmarket_body, Link
+from search_app.models.parse import Link, parse_mechmarket_body
 
 body_1 = """
 -Discounted prices-  https://imgur.com/a/fbsRAYv
 """
+
 
 def test_parse_text_links():
     res = parse_mechmarket_body(body_1)

@@ -1,5 +1,3 @@
-
-
 def css_classes(request):
     return {
         "required_css_class": "is-primary",

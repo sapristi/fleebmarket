@@ -1,23 +1,32 @@
 import logging
 from typing import List
+
 from django.db import models
 from django.db.models.fields.json import JSONField
+from search_app.meilisearch_utils import MAdvertsIndex
 
 from advert_parsing import parse
 
-from search_app.meilisearch_utils import MAdvertsIndex
-
 from .common import RedditAdvertType
-from .parse import parse_mechmarket_advert
 from .duplicates import duplicate_offers
+from .parse import parse_mechmarket_advert
 
 logger = logging.getLogger(__name__)
+
+# AdvertTypes that are parsed to items
+TypesToItemize = (RedditAdvertType.Selling,)
 
 
 class RedditAdvert(models.Model):
     reddit_id = models.CharField(max_length=20, unique=True, db_index=True)
     title = models.CharField(max_length=2000)
-    ad_type = models.CharField(max_length=20, choices=RedditAdvertType.choices(), db_index=True, blank=True, null=True)
+    ad_type = models.CharField(
+        max_length=20,
+        choices=RedditAdvertType.choices(),
+        db_index=True,
+        blank=True,
+        null=True,
+    )
     created_utc = models.DateTimeField(db_index=True)
     full_text = models.TextField(blank=True)
     author = models.CharField(max_length=100, db_index=True)
@@ -26,19 +35,24 @@ class RedditAdvert(models.Model):
     is_duplicate = models.BooleanField(default=False, db_index=True)
 
     def update_extra(self):
-        extra = parse_mechmarket_advert(
-            self.ad_type, self.title, self.full_text
-        )
+        extra = parse_mechmarket_advert(self.ad_type, self.title, self.full_text)
         self.extra = extra
         try:
             self.save()
         except ValueError as exc:
             from django.forms.models import model_to_dict
-            logger.error("Failed saving model: %s; model data is %s", self, model_to_dict(self))
+
+            logger.error(
+                "Failed saving model: %s; model data is %s", self, model_to_dict(self)
+            )
             raise exc from None
 
     def serialize_meilisearch(self):
-        if not self.ad_type in (RedditAdvertType.Selling, RedditAdvertType.Buying, RedditAdvertType.Trading):
+        if not self.ad_type in (
+            RedditAdvertType.Selling,
+            RedditAdvertType.Buying,
+            RedditAdvertType.Trading,
+        ):
             return None
         if self.extra is None:
             return None
@@ -80,20 +94,26 @@ class RedditAdvert(models.Model):
         return self.extra.get("region")
 
     def parse_items(self):
-        from .reddit_advert_item import RedditAdvertItem # delayed import to avoid circular import issues
+        from .reddit_advert_item import (  # delayed import to avoid circular import issues
+            RedditAdvertItem,
+        )
+
         RedditAdvertItem.objects.filter(reddit_advert=self).delete()
-        if not self.ad_type in (RedditAdvertType.Selling, RedditAdvertType.Buying, RedditAdvertType.Trading):
+        if not self.ad_type in TypesToItemize:
             return
         items = parse(self.full_text)
         for item in items:
             if item.relevant_price == None:
                 continue
+            if self.is_duplicate and not item.sold:
+                continue
+            sold = True if self.ad_type == RedditAdvertType.Sold else item.sold
             item_obj = RedditAdvertItem(
                 reddit_advert=self,
                 price=item.relevant_price.amount,
-                sold=item.sold,
+                sold=sold,
                 full_text=item.ast.to_html(),
-                extra={}
+                extra={},
             )
             item_obj.save()
 
@@ -113,9 +133,7 @@ class RedditAdvert(models.Model):
             created_utc__lt=self.created_utc,
         )
         if not check:
-            dup_canditates = dup_canditates.filter(
-                is_duplicate=False
-            )
+            dup_canditates = dup_canditates.filter(is_duplicate=False)
         duplicates = []
         for advert in dup_canditates:
             if advert.extra is None:
@@ -132,6 +150,3 @@ class RedditAdvert(models.Model):
             advert.is_duplicate = True
             advert.save()
         logger.debug(f"[{self.reddit_id}] Marked {len(duplicates)} as duplicates")
-
-
-

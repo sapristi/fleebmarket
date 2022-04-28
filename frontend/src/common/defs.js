@@ -10,7 +10,5 @@ export const AdTypes = {
   Selling: {display: "Selling", payload: "Selling"},
   Buying: {display: "Buying", payload: "Buying"},
   Trading: {display: "Trading", payload: "Trading"},
-  Artisan: {display: "Artisan", payload: "Artisan"},
-  Bulk: {display: "Bulk", payload: "Bulk"},
 }
 

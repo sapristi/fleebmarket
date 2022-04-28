@@ -10,10 +10,10 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.1/ref/settings/
 """
 
+import json
 import os
-import logging
-from pathlib import Path
 import socket
+from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 
@@ -36,117 +36,107 @@ SECRET_KEY = os.environ["DJANGO_SECRET_KEY"]
 
 # SECURITY WARNING: don't run with debug turned on in production!
 
-ALLOWED_HOSTS = [
-    '127.0.0.1', socket.gethostname(), socket.gethostname() + '.local'
-]
+ALLOWED_HOSTS = ["127.0.0.1", socket.gethostname(), socket.gethostname() + ".local"]
 
 
 # Application definition
 
 INSTALLED_APPS = [
-
-    'accounts',
-    'survey',
-    'fleebmarket',
-    'search_app',
-    'alerts',
-
-    'django.contrib.admin',
-    'django.contrib.auth',
-    'django.contrib.contenttypes',
-    'django.contrib.sessions',
-    'django.contrib.messages',
-    'django.contrib.staticfiles',
-
-    'django.contrib.sites',
-    'django.contrib.sitemaps',
-
-    'markdown_deux',
-    'pagedown',
-    'simpleblog',
-    'corsheaders',
-
-    'allauth',
-    'allauth.account',
-    'allauth.socialaccount',
-    'allauth.socialaccount.providers.reddit',
-    'allauth.socialaccount.providers.discord',
-
-    'django_simple_bulma',
-    'django_filters',
-
-    'django_extensions',
+    "accounts",
+    "survey",
+    "fleebmarket",
+    "search_app",
+    "alerts",
+    "django.contrib.admin",
+    "django.contrib.auth",
+    "django.contrib.contenttypes",
+    "django.contrib.sessions",
+    "django.contrib.messages",
+    "django.contrib.staticfiles",
+    "django.contrib.sites",
+    "django.contrib.sitemaps",
+    "markdown_deux",
+    "pagedown",
+    "simpleblog",
+    "corsheaders",
+    "allauth",
+    "allauth.account",
+    "allauth.socialaccount",
+    "allauth.socialaccount.providers.reddit",
+    "allauth.socialaccount.providers.discord",
+    "django_simple_bulma",
+    "django_filters",
+    "django_extensions",
     # 'django_rename_app',
 ]
 
 SITE_ID = 1
 MIDDLEWARE = [
-    'corsheaders.middleware.CorsMiddleware',
-    'django.middleware.security.SecurityMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    "corsheaders.middleware.CorsMiddleware",
+    "django.middleware.security.SecurityMiddleware",
+    "django.contrib.sessions.middleware.SessionMiddleware",
+    "django.middleware.common.CommonMiddleware",
+    "django.middleware.csrf.CsrfViewMiddleware",
+    "django.contrib.auth.middleware.AuthenticationMiddleware",
+    "django.contrib.messages.middleware.MessageMiddleware",
+    "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
-ROOT_URLCONF = 'fleebmarket.urls'
+ROOT_URLCONF = "fleebmarket.urls"
 
 TEMPLATES = [
     {
-        'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [
-            BASE_DIR / 'overrides' / 'allauth_templates',
-            BASE_DIR / 'templates',
+        "BACKEND": "django.template.backends.django.DjangoTemplates",
+        "DIRS": [
+            BASE_DIR / "overrides" / "allauth_templates",
+            BASE_DIR / "templates",
         ],
-        'APP_DIRS': True,
-        'OPTIONS': {
-            'context_processors': [
-                'django.template.context_processors.debug',
-                'django.template.context_processors.request',
-                'django.contrib.auth.context_processors.auth',
-                'django.contrib.messages.context_processors.messages',
-                'survey.context_processors.survey_active',
-                'fleebmarket.context_processors.css_classes',
+        "APP_DIRS": True,
+        "OPTIONS": {
+            "context_processors": [
+                "django.template.context_processors.debug",
+                "django.template.context_processors.request",
+                "django.contrib.auth.context_processors.auth",
+                "django.contrib.messages.context_processors.messages",
+                "survey.context_processors.survey_active",
+                "fleebmarket.context_processors.css_classes",
             ],
         },
     },
 ]
 
 
+WSGI_APPLICATION = "fleebmarket.wsgi.application"
 
-WSGI_APPLICATION = 'fleebmarket.wsgi.application'
-
-DEFAULT_AUTO_FIELD='django.db.models.AutoField'
+DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
 
 
 # USER
 
 
 AUTHENTICATION_BACKENDS = [
-    'django.contrib.auth.backends.ModelBackend',
-    'allauth.account.auth_backends.AuthenticationBackend',
+    "django.contrib.auth.backends.ModelBackend",
+    "allauth.account.auth_backends.AuthenticationBackend",
 ]
 
 
-AUTH_USER_MODEL = 'accounts.CustomUser'
+AUTH_USER_MODEL = "accounts.CustomUser"
 
 # Password validation
 # https://docs.djangoproject.com/en/3.1/ref/settings/#auth-password-validators
 
 AUTH_PASSWORD_VALIDATORS = [
     {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+        "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+        "NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
+        "NAME": "django.contrib.auth.password_validation.CommonPasswordValidator",
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
+        "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",
     },
 ]
 
@@ -154,13 +144,12 @@ AUTH_PASSWORD_VALIDATORS = [
 # AllAuth
 
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/3.1/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = "en-us"
 
-TIME_ZONE = 'Etc/UTC'
+TIME_ZONE = "Etc/UTC"
 
 USE_I18N = True
 
@@ -172,94 +161,82 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
-STATIC_URL = '/static/'
+STATIC_URL = "/static/"
 STATICFILES_DIRS = [
     BASE_DIR / "static",
 ]
 
 STATICFILES_FINDERS = [
-  # First add the two default Finders, since this will overwrite the default.
-  'django.contrib.staticfiles.finders.FileSystemFinder',
-  'django.contrib.staticfiles.finders.AppDirectoriesFinder',
-
-  # Now add our custom SimpleBulma one.
-  'django_simple_bulma.finders.SimpleBulmaFinder',
+    # First add the two default Finders, since this will overwrite the default.
+    "django.contrib.staticfiles.finders.FileSystemFinder",
+    "django.contrib.staticfiles.finders.AppDirectoriesFinder",
+    # Now add our custom SimpleBulma one.
+    "django_simple_bulma.finders.SimpleBulmaFinder",
 ]
 
 # export location for `collectstatic` command
 STATIC_ROOT = DATA_DIR / "static"
 
-MEDIA_URL = '/media/'
+MEDIA_URL = "/media/"
 # Path where media is stored
-MEDIA_ROOT = DATA_DIR / 'media/'
+MEDIA_ROOT = DATA_DIR / "media/"
 
-BULMA_SETTINGS = {
-  "output_style": "compressed",
-    "extensions": [
-        "bulma-switch"
-    ]
-}
+BULMA_SETTINGS = {"output_style": "compressed", "extensions": ["bulma-switch"]}
 
 
-MEILISEARCH = {
-    'host': os.environ["MEILISEARCH_HOST"]
-}
+MEILISEARCH = {"host": os.environ["MEILISEARCH_HOST"]}
 
 LOGGING = {
-    'version': 1,
-    'disable_existing_loggers': False,
-    'formatters': {
-        'verbose': {
-            'format': '{levelname} {asctime} {module} {process:d} {thread:d} {message}',
-            'style': '{',
+    "version": 1,
+    "disable_existing_loggers": False,
+    "formatters": {
+        "verbose": {
+            "format": "{levelname} {asctime} {module} {process:d} {thread:d} {message}",
+            "style": "{",
         },
-        'simple': {
-            'format': '{levelname} {name} {message}',
-            'style': '{',
+        "simple": {
+            "format": "{levelname} {name} {message}",
+            "style": "{",
         },
     },
-    'handlers': {
-        'console': {
-            'class': 'logging.StreamHandler',
-            'formatter': 'simple',
+    "handlers": {
+        "console": {
+            "class": "logging.StreamHandler",
+            "formatter": "simple",
         },
-        'null': {
-            'class': "logging.NullHandler"
-        }
+        "null": {"class": "logging.NullHandler"},
     },
-    'root': {
-        'handlers': ['console'],
-        'level': 'WARNING',
+    "root": {
+        "handlers": ["console"],
+        "level": "WARNING",
     },
 }
 
 REDDIT_CREDS = {
     "client_id": os.environ["REDDIT_APP_CLIENT_ID"],
     "secret": os.environ["REDDIT_APP_SECRET"],
-    "user_agent": 'django:fleebmarket:0.1 (by /u/protoplancton)',
+    "user_agent": "django:fleebmarket:0.1 (by /u/protoplancton)",
 }
 
 DISCORD_CREDS = {
-    'client_id': os.environ.get('DISCORD_APP_CLIENT_ID'),
-    'secret': os.environ.get('DISCORD_APP_SECRET'),
-    'key': os.environ.get('DISCORD_APP_KEY'),
-    'bot_token': os.environ.get("DISCORD_BOT_TOKEN"),
+    "client_id": os.environ.get("DISCORD_APP_CLIENT_ID"),
+    "secret": os.environ.get("DISCORD_APP_SECRET"),
+    "key": os.environ.get("DISCORD_APP_KEY"),
+    "bot_token": os.environ.get("DISCORD_BOT_TOKEN"),
 }
 
 
 SOCIALACCOUNT_PROVIDERS = {
-    'reddit': {
-        'APP': {
-            'client_id': REDDIT_CREDS["client_id"],
-            'secret': REDDIT_CREDS["secret"],
-            'key': ''
+    "reddit": {
+        "APP": {
+            "client_id": REDDIT_CREDS["client_id"],
+            "secret": REDDIT_CREDS["secret"],
+            "key": "",
         },
-        'USER_AGENT': REDDIT_CREDS["user_agent"],
-        'AUTH_PARAMS': {'duration': 'permanent'},
+        "USER_AGENT": REDDIT_CREDS["user_agent"],
+        "AUTH_PARAMS": {"duration": "permanent"},
     },
-    'discord': {
-        'APP': DISCORD_CREDS
-    }
+    "discord": {"APP": DISCORD_CREDS},
 }
 
 REDDIT_BOT_CREDS = {
@@ -278,9 +255,18 @@ MARKDOWN_DEUX_STYLES = {
             "tables": None,
             "html-classes": {
                 "table": "blog-table table is-striped is-bordered is-hoverable",
-                "img": "image blog-image"
-            }
+                "img": "image blog-image",
+            },
         },
         "safe_mode": "escape",
     },
 }
+
+REACT_BUILD_DIR = BASE_DIR / "static" / "frontend_build"
+
+# Pull the js and css filenames from the current build
+with open(REACT_BUILD_DIR / "asset-manifest.json") as f:
+    data = json.load(f)
+
+REACT_CSS_PATH = data["files"]["main.css"].replace("static/", "frontend_build/static/")
+REACT_JS_PATH = data["files"]["main.js"].replace("static/", "frontend_build/static/")

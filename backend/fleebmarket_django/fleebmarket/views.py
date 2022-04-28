@@ -7,7 +7,8 @@ def redirect_search(request):
 
 
 def about(request):
-    return render(request, 'generic/about.html', {})
+    return render(request, "generic/about.html", {})
+
 
 def contact(request):
-    return render(request, 'generic/contact.html', {})
+    return render(request, "generic/contact.html", {})

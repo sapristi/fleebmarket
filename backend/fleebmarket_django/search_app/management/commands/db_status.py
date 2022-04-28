@@ -1,8 +1,10 @@
-import djclick
 import pprint
 from collections import Counter
+
+import djclick
 from search_app.meilisearch_utils import MAdvertsIndex, MAdvertsItemsIndex
 from search_app.models import RedditAdvert, RedditAdvertItem
+
 
 def get_tasks_status(icli):
     tasks = icli.get_tasks()
