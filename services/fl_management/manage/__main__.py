@@ -5,10 +5,12 @@ from dotenv import load_dotenv
 
 from . import alerts
 from . import services
+from . import monitor
 
 app = typer.Typer(add_completion=False, no_args_is_help=True)
 app.add_typer(alerts.app, name="alerts")
 app.add_typer(services.app, name="services")
+app.add_typer(monitor.app, name="monitor")
 
 
 default_dotenv = Path(__file__).parent.parent.parent.parent / ".env"
