@@ -63,13 +63,13 @@ def test_text_extraction2():
 
 Noxary 268.2:
 
-\-63.5g spring swapped gateron ink blacks, with deskey films and lubed with krytox 205g0/105 on springs (5mm pc plate)
+\\-63.5g spring swapped gateron ink blacks, with deskey films and lubed with krytox 205g0/105 on springs (5mm pc plate)
 
-\-alpaca on fn and right alt, tangie on spacebar
+\\-alpaca on fn and right alt, tangie on spacebar
 
-\-comes with a extra desoldered but fully working pcb
+\\-comes with a extra desoldered but fully working pcb
 
-\-there is a patina on the weight (see pics)
+\\-there is a patina on the weight (see pics)
 
 Asking 400 SHIPPED CONUS
     """
@@ -79,3 +79,51 @@ Asking 400 SHIPPED CONUS
         print(item)
     assert len(items) == 1
 
+
+def test_text_extraction_remove_table():
+    md_str = """
+ Timestamps/Pictures: [https://imgur.com/a/8s1pwDh](https://imgur.com/a/8s1pwDh)
+
+ &#x200B;
+
+ Rama Jules: 380 USD shipped- Kuro/Oro- Hotswap- Extra POM Plate- Stupidfish Foam- Assembled once, in almost new condition. no flaws
+
+ ~~GMK Dark: 400 USD shipped- new, only opened to inspect- base~~ SOLD
+
+ ~~GMK Olivia Dark: 350 USD shipped- new, only opened to inspect- base~~ SOLD
+
+ GMK Minimal R2: 150 USD shipped- new, sealed- base
+
+ JTK Night Sakura: 180 USD shipped- new- base, latin alphas
+
+ Akko Black and Pink Keycaps:- new- 50 USD shipped
+
+ Artisans-
+
+|Rama Vaporwave: 100 USD shipped|Rama Vaporwave: 100 USD shipped|Rama Hiragana: 50 USD shipped (mounts slightly crooked)|~~Rama Thermal Moon: 60 USD shipped~~ SOLD|
+|:-|:-|:-|:-|
+|~~Rama Stealth: 100 USD shipped~~ SOLD|Rama Masterpiece: 100 USD shipped|Rama Dolch: 50 USD shipped|~~Thok Agent01: 75 USD shipped~~ SOLD|
+|~~Rama First Love: 100 USD shipped~~ SOLD|Monokei x CYSM Keyby: 100 USD shipped|~~Rama Ivory: 60 USD shipped~~ SOLD|Stacchio Bois Teal: 50 USD shipped|
+|Thok Queen: 75 USD shipped|Thok Ace: 60 USD shipped|Thok Ace: 60 USD shipped||
+
+ Please pm and no chats. Thanks
+
+ Edit: all uploaded/ updating sold items
+
+    """
+    ast = md_to_ast(md_str)
+    items = list(extract_text_items(ast))
+    for item in items:
+        print(item)
+    assert len(items) == 6
+
+def test_text_extraction_remove_table_minimal():
+    md_str = """
+|Rama Vaporwave: 100 USD shipped|Rama Vaporwave: 100 USD shipped|Rama Hiragana: 50 USD shipped (mounts slightly crooked)|~~Rama Thermal Moon: 60 USD shipped~~ SOLD|
+|:-|:-|:-|:-|
+|~~Rama Stealth: 100 USD shipped~~ SOLD|Rama Masterpiece: 100 USD shipped|Rama Dolch: 50 USD shipped|~~Thok Agent01: 75 USD shipped~~ SOLD|
+|~~Rama First Love: 100 USD shipped~~ SOLD|Monokei x CYSM Keyby: 100 USD shipped|~~Rama Ivory: 60 USD shipped~~ SOLD|Stacchio Bois Teal: 50 USD shipped|
+    """
+    ast = md_to_ast(md_str)
+    items = list(extract_text_items(ast))
+    assert len(items) == 0

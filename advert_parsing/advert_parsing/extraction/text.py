@@ -47,6 +47,7 @@ def extracts_items_from_text(ast: MdElement, res: list[ExtractedItem]):
 
 def extract_text_items(ast: MdElement):
     res = []
-    extracts_items_from_text(ast, res)
+    ast_no_table = remove_tables(ast)
+    extracts_items_from_text(ast_no_table, res)
     return res
 
