@@ -77,6 +77,14 @@ GAF | Grimace v1 | Any colorway
     assert len(items) == 0
 
 
+def test_extraction_table_base_5():
+    md_str = """
+|Rama Vaporwave: 100 USD shipped|Rama Vaporwave: 100 USD shipped|Rama Hiragana: 50 USD shipped (mounts slightly crooked)|~~Rama Thermal Moon: 60 USD shipped~~ SOLD|
+|:-|:-|:-|:-|
+|~~Rama Stealth: 100 USD shipped~~ SOLD|Rama Masterpiece: 100 USD shipped|Rama Dolch: 50 USD shipped|~~Thok Agent01: 75 USD shipped~~ SOLD|
+|~~Rama First Love: 100 USD shipped~~ SOLD|Monokei x CYSM Keyby: 100 USD shipped|~~Rama Ivory: 60 USD shipped~~ SOLD|Stacchio Bois Teal: 50 USD shipped|
+    """
+    ast = md_to_ast(md_str)
 
-
-
+    items = list(extract_table_items(ast))
+    assert len(items) == 0

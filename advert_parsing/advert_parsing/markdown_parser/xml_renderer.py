@@ -1,3 +1,5 @@
+import re
+
 from misaka.api import BaseRenderer
 from misaka import Markdown
 from xml.etree import ElementTree
@@ -108,8 +110,22 @@ class XMLRenderer(BaseRenderer):
             return None
         return f'<text>{text}</text>'
 
+def fix_tables_heading_line(line: str):
+    if not line.startswith("|"):
+        return line
+
+    return re.sub(r":-(?!-)", ":--",  line)
+
+def fix_tables_heading(markdown_str: str):
+    lines = markdown_str.splitlines()
+    return "\n".join(
+        fix_tables_heading_line(line)
+        for line in lines
+    )
 
 def parse_md_to_xml(markdown_str) -> ElementTree.Element:
+
+    markdown_str = fix_tables_heading(markdown_str)
     markdown_str = markdown_str.replace(
         '\\&#x200B;', '---'
     ).replace(
