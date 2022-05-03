@@ -4,4 +4,3 @@ requests
 cysystemd
 gitpython
 humanize
-meilisearch>=0.18.0,<0.19
