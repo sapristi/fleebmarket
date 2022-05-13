@@ -21,3 +21,8 @@ cysystemd
 -e ../advert_parsing
 tqdm
 django-click
+
+cysystemd
+blessings
+humanize
+gitpython
