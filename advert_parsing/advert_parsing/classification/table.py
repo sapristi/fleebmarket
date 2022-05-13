@@ -3,6 +3,7 @@ from pydantic import BaseModel
 import more_itertools
 from typing import Optional, Union, get_args
 from dataclasses import dataclass
+from advert_parsing.dataframe import DataFrame
 
 from .prices import (
     find_price_token_in_text, find_prices_in_text,
@@ -74,30 +75,30 @@ def header_cell_with_price(cell):
     return sum(price_tokens) >= 1 and not price_tags
 
 # TODO: we could also check for striked text, which would indicate it is not a header
-def classify_with_header(df) -> Union[ItemsTable,Failure]:
-    first_row = df.iloc[0]
+def classify_with_header(df: DataFrame) -> Union[ItemsTable,Failure]:
+    first_row = df.rows[0]
     cells_with_price = [header_cell_with_price(cell) for cell in first_row]
     price_header_indices = [i for i, is_price_header in enumerate(cells_with_price) if is_price_header]
     if price_header_indices:
         return ItemsTable(price_cols=price_header_indices, has_header=True)
     return Failure("Cannot classify from header")
 
-def make_bool_df(df, find_function):
+def make_bool_df(df: DataFrame, find_function):
     prices_df = df.applymap(find_in_cell(find_function))
     bool_df = prices_df.applymap(bool)
     return bool_df
 
 
-def generate_repartion(bool_df) -> list[FoundPrices]:
-    col_count = bool_df.sum()
+def generate_repartion(bool_df: DataFrame) -> list[FoundPrices]:
+    col_count = [sum(col) for col in bool_df.columns]
     repartition = []
     for i, value in enumerate(col_count):
         if value != 0:
             repartition.append(FoundPrices(nb_found=value, col_index=i))
     return sorted(repartition, key=lambda x: x.nb_found)
 
-def classify_table_simple(df, find_function) -> TableClassification:
-    nb_rows = len(df.index)
+def classify_table_simple(df: DataFrame, find_function) -> TableClassification:
+    nb_rows = len(df.rows)
     nb_cols = len(df.columns)
 
     bool_df = make_bool_df(df, find_function)
@@ -112,7 +113,7 @@ def classify_table_simple(df, find_function) -> TableClassification:
 
     if len(relevant_columns) == 1:
         value = relevant_columns[0]
-        has_header = not any(bool_df.iloc[0])
+        has_header = not any(bool_df.rows[0])
         return ItemsTable(price_cols=[value.col_index], has_header=has_header)
 
     if (
@@ -124,7 +125,7 @@ def classify_table_simple(df, find_function) -> TableClassification:
 
     return ItemsTable(price_cols=[value.col_index for value in relevant_columns])
 
-def combined_classif(df) -> TableClassification:
+def combined_classif(df: DataFrame) -> TableClassification:
     header_classif = classify_with_header(df)
     price_classif = classify_table_simple(df, find_prices_in_text)
 

@@ -1,5 +1,4 @@
 from typing import Iterable
-import pandas as pd
 import more_itertools
 
 from advert_parsing.markdown_parser import (
@@ -13,6 +12,7 @@ from advert_parsing.classification.prices import (
     find_prices_in_text, find_price_wo_curr_in_text, find_sold_token_in_text
 )
 from .extracted_item import ExtractedItem
+from advert_parsing.dataframe import DataFrame
 
 
 def extract_items_from_table(table: Table, classif: ItemsTable) -> Iterable[ExtractedItem]:
@@ -53,7 +53,7 @@ def extract_items_from_table(table: Table, classif: ItemsTable) -> Iterable[Extr
 def extract_table_items(advert_ast: MdElement) -> Iterable[ExtractedItem]:
     tables = extract_tables(advert_ast)
     for table in tables:
-        table_df = pd.DataFrame(table.rows)
+        table_df = DataFrame(table.rows)
         classif = combined_classif(table_df)
         if not isinstance(classif, ItemsTable):
             continue

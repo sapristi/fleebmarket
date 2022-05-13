@@ -54,7 +54,6 @@ Thanks in advance!
     for item in items:
         print(item.sold)
     assert len(items) == 2
-    raise
 
 def test_text_extraction3():
     md_str = """

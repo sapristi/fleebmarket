@@ -1,4 +1,3 @@
 git+https://github.com/sapristi/misaka.git@master
 pydantic
 more_itertools
-pandas
