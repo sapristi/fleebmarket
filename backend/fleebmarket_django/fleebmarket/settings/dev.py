@@ -10,7 +10,7 @@ MIDDLEWARE.insert(index + 1, "whitenoise.middleware.WhiteNoiseMiddleware")
 
 
 ALLOWED_HOSTS += ["mmill.eu", "*"]
-INSTALLED_APPS += ["django_seed"]
+INSTALLED_APPS += []
 
 DEBUG = True
 

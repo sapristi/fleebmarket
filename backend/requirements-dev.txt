@@ -1,4 +1,3 @@
-django-seed
 html2image
 django-stubs
 djangorestframework-stubs
