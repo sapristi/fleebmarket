@@ -1,35 +1,46 @@
 from typing import Iterable
+
 import more_itertools
-
-from advert_parsing.markdown_parser import (
-    Text, Listing, Table, Paragraph,
-    Mdast, MdElement, Listing,
-    md_to_ast, Root, ListItem
-)
-from advert_parsing.markdown_parser.utils import find_in_tree, extract_tables
-from advert_parsing.classification.table import ItemsTable, combined_classif
 from advert_parsing.classification.prices import (
-    find_prices_in_text, find_price_wo_curr_in_text, find_sold_token_in_text
+    find_price_wo_curr_in_text,
+    find_prices_in_text,
+    find_sold_token_in_text,
 )
-from .extracted_item import ExtractedItem
+from advert_parsing.classification.table import ItemsTable, combined_classif
 from advert_parsing.dataframe import DataFrame
+from advert_parsing.markdown_parser import (
+    Listing,
+    ListItem,
+    Mdast,
+    MdElement,
+    Paragraph,
+    Root,
+    Table,
+    Text,
+    md_to_ast,
+)
+from advert_parsing.markdown_parser.utils import extract_tables, find_in_tree
+
+from .extracted_item import ExtractedItem
 
 
-def extract_items_from_table(table: Table, classif: ItemsTable) -> Iterable[ExtractedItem]:
+def extract_items_from_table(
+    table: Table, classif: ItemsTable
+) -> Iterable[ExtractedItem]:
     if classif.has_header:
         header = table.rows[0]
         rows = table.rows[1:]
         make_ast = lambda row: Table(rows=[header, row])
     else:
         rows = table.rows
+
         def make_ast_(row):
             return Listing(
                 children=[
-                    ListItem(children=cell.children)
-                    for cell in row
-                    if cell is not None
+                    ListItem(children=cell.children) for cell in row if cell is not None
                 ]
             )
+
         make_ast = make_ast_
 
     for row in rows:
@@ -59,4 +70,3 @@ def extract_table_items(advert_ast: MdElement) -> Iterable[ExtractedItem]:
             continue
         for item in extract_items_from_table(table, classif):
             yield item
-

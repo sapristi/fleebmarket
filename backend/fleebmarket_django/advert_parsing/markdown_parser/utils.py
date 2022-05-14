@@ -1,7 +1,22 @@
 import more_itertools
+
 from .md_ast import (
-     MdElement, StyleValue, Text, Paragraph, Heading, Listing, ListItem, Table,
-    Parent, ThematicBreak, LineBreak, Root, Style, Link, Cell, Row
+    Cell,
+    Heading,
+    LineBreak,
+    Link,
+    Listing,
+    ListItem,
+    MdElement,
+    Paragraph,
+    Parent,
+    Root,
+    Row,
+    Style,
+    StyleValue,
+    Table,
+    Text,
+    ThematicBreak,
 )
 
 
@@ -25,21 +40,13 @@ def md_wordcount(item: MdElement):
     if isinstance(item, Parent):
         return sum(map(md_wordcount, item.children))
     elif isinstance(item, Table):
-        return sum(
-            md_wordcount(cell)
-            for row in item.rows
-            for cell in row
-        )
+        return sum(md_wordcount(cell) for row in item.rows for cell in row)
     elif isinstance(item, Text):
         return len(item.text.split())
-    elif (
-            isinstance(item, ThematicBreak) or
-            isinstance(item, LineBreak)
-    ):
+    elif isinstance(item, ThematicBreak) or isinstance(item, LineBreak):
         return 0
     else:
         raise Exception(f"Unkown element: {item.__class__} ({item})")
-
 
 
 def print_diff(ast1, ast2):
@@ -66,17 +73,25 @@ def print_diff(ast1, ast2):
         {ast2}
         """
 
+
 def find_in_tree(find_function):
     def inner(cell):
-        if cell is None or isinstance(cell, LineBreak) or isinstance(cell, ThematicBreak):
+        if (
+            cell is None
+            or isinstance(cell, LineBreak)
+            or isinstance(cell, ThematicBreak)
+        ):
             return []
         if isinstance(cell, Text):
             return find_function(cell)
         else:
-            return list(more_itertools.collapse(
-                [find_in_tree(find_function)(child) for child in cell.children],
-                levels=1
-            ))
+            return list(
+                more_itertools.collapse(
+                    [find_in_tree(find_function)(child) for child in cell.children],
+                    levels=1,
+                )
+            )
+
     return inner
 
 
@@ -92,12 +107,14 @@ def clean_table(table: Table):
 def extract_tables(item: MdElement) -> list[Table]:
     if isinstance(item, Table):
         return [item]
-    elif (
-        isinstance(item, Listing) or
-        isinstance(item, Root)
-    ):
+    elif isinstance(item, Listing) or isinstance(item, Root):
         extracted_tables_lists = [extract_tables(child) for child in item.children]
-        tables = [clean_table(t) for tables in extracted_tables_lists for t in tables if tables is not None]
+        tables = [
+            clean_table(t)
+            for tables in extracted_tables_lists
+            for t in tables
+            if tables is not None
+        ]
         return tables
     else:
         return []

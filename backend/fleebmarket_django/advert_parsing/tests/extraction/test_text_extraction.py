@@ -1,9 +1,15 @@
+from advert_parsing.extraction.text import extract_text_items
 from advert_parsing.markdown_parser import (
-    Text, Listing, ListItem, Table, Paragraph,
-    Mdast, MdElement, Listing,
-    md_to_ast, Root
+    Listing,
+    ListItem,
+    Mdast,
+    MdElement,
+    Paragraph,
+    Root,
+    Table,
+    Text,
+    md_to_ast,
 )
-from advert_parsing.extraction.text import  extract_text_items
 
 
 def test_text_extraction1():
@@ -54,6 +60,7 @@ Thanks in advance!
     for item in items:
         print(item.sold)
     assert len(items) == 2
+
 
 def test_text_extraction3():
     md_str = """
@@ -115,6 +122,7 @@ def test_text_extraction_remove_table():
     for item in items:
         print(item)
     assert len(items) == 6
+
 
 def test_text_extraction_remove_table_minimal():
     md_str = """

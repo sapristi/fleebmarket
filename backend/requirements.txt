@@ -18,7 +18,6 @@ praw
 fuzzywuzzy
 python-Levenshtein
 cysystemd
--e ../advert_parsing
 tqdm
 django-click
 

@@ -1,7 +1,8 @@
 import os
 from pathlib import Path
-import pytest
 from typing import Tuple
+
+import pytest
 
 DATA_DIR = Path(__file__).parent / "data"
 
@@ -9,7 +10,7 @@ DATA_DIR = Path(__file__).parent / "data"
 @pytest.fixture(scope="session")
 def adverts_md() -> list[Tuple[str, str]]:
     res = []
-    md_dir = DATA_DIR / 'adverts_md'
+    md_dir = DATA_DIR / "adverts_md"
     for filename in md_dir.iterdir():
         if not filename.is_file():
             continue

@@ -1,10 +1,13 @@
-from pydantic import BaseModel
+from typing import Optional
+
 from advert_parsing.classification.prices import PriceTag, find_sold_token_in_text
-from advert_parsing.markdown_parser.utils import find_in_tree
-from advert_parsing.markdown_parser.md_ast import MdElement
+
 # for some reason necessary for upate_forward_ref to work
 from advert_parsing.markdown_parser.md_ast import *
-from typing import Optional
+from advert_parsing.markdown_parser.md_ast import MdElement
+from advert_parsing.markdown_parser.utils import find_in_tree
+from pydantic import BaseModel
+
 
 class ExtractedItem(BaseModel):
     class Config:
@@ -36,5 +39,6 @@ class ExtractedItem(BaseModel):
                 max_amount = price.amount
                 max_price = price
         return max_price
+
 
 ExtractedItem.update_forward_refs()

@@ -1,9 +1,15 @@
-from advert_parsing.markdown_parser import (
-    Text, Listing, Table, Paragraph,
-    Mdast, MdElement, Listing,
-    md_to_ast, Root
-)
 from advert_parsing.extraction.table import extract_table_items
+from advert_parsing.markdown_parser import (
+    Listing,
+    Mdast,
+    MdElement,
+    Paragraph,
+    Root,
+    Table,
+    Text,
+    md_to_ast,
+)
+
 
 def test_extraction_from_tables(adverts_md):
     for name, md in adverts_md:
@@ -30,6 +36,7 @@ def test_extraction_table_base_1():
 
     assert len(items) == 5
     print(items)
+
 
 def test_extraction_table_base_2():
     md_str = """

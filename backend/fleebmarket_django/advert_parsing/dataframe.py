@@ -8,9 +8,4 @@ class DataFrame:
                 self.columns[i].append(cell)
 
     def applymap(self, fn):
-        return DataFrame(
-            [
-                [fn(cell) for cell in row]
-                for row in self.rows
-            ]
-        )
+        return DataFrame([[fn(cell) for cell in row] for row in self.rows])

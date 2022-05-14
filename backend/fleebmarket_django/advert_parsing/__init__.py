@@ -1,8 +1,7 @@
-from advert_parsing.markdown_parser import md_to_ast
 from advert_parsing.extraction.extracted_item import ExtractedItem
-from advert_parsing.extraction.text import  extract_text_items
-from advert_parsing.extraction.table import  extract_table_items
-
+from advert_parsing.extraction.table import extract_table_items
+from advert_parsing.extraction.text import extract_text_items
+from advert_parsing.markdown_parser import md_to_ast
 
 
 def parse(md_str: str) -> list[ExtractedItem]:
@@ -11,10 +10,8 @@ def parse(md_str: str) -> list[ExtractedItem]:
     text_items = list(extract_text_items(ast))
     table_items = list(extract_table_items(ast))
 
-    return [
-        *text_items,
-        *table_items
-    ]
+    return [*text_items, *table_items]
+
 
 def parse_debug(md_str) -> list[ExtractedItem]:
 
@@ -25,7 +22,4 @@ def parse_debug(md_str) -> list[ExtractedItem]:
     table_items = list(extract_table_items(ast))
     print("Table items", table_items)
 
-    return [
-        *text_items,
-        *table_items
-    ]
+    return [*text_items, *table_items]
