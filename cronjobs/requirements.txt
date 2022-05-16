@@ -1,8 +1,0 @@
-praw
-psaw
-python-dotenv
-typer
-coloredlogs
-python-dateutil
-pydantic
-cysystemd
