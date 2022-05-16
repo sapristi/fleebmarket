@@ -1,10 +1,13 @@
 import logging
 import re
+from datetime import datetime
 from typing import Any, Optional
 
 import mistune
+from dateutil import tz
+from praw.models import Submission as PrawSubmission
 from pydantic import BaseModel
-from search_app.models import RedditAdvertType
+from search_app.models import RedditAdvert, RedditAdvertType
 
 logger = logging.getLogger(__name__)
 markdown_ast = mistune.create_markdown(renderer=mistune.AstRenderer())
@@ -94,10 +97,8 @@ def parse_mechmarket_body(body):
     return ParsedBody(text=text, links=links)
 
 
-def parse_mechmarket_advert(
-    ad_type: RedditAdvertType, title: str, body: str
-) -> Optional[dict[str, Any]]:
-    if ad_type in [
+def parse_submission_extra(submission: PrawSubmission) -> Optional[dict[str, Any]]:
+    if submission.link_flair_text in [
         RedditAdvertType.Selling,
         RedditAdvertType.Buying,
         RedditAdvertType.Sold,
@@ -105,12 +106,56 @@ def parse_mechmarket_advert(
         RedditAdvertType.Trading,
         RedditAdvertType.Traded,
     ]:
-        parsed_title = parse_mechmarket_title(title)
+        parsed_title = parse_mechmarket_title(submission.title)
     else:
-        parsed_title = parse_mechmarket_title_simple(title)
+        parsed_title = parse_mechmarket_title_simple(submission.title)
 
     if parsed_title is None:
         return None
-    parsed_body = parse_mechmarket_body(body)
+    parsed_body = parse_mechmarket_body(submission.selftext)
 
     return {**parsed_title.dict(), **parsed_body.dict()}
+
+
+def parse_submission(submission: PrawSubmission) -> Optional[RedditAdvert]:
+    if submission.author is None:
+        return None
+
+    if submission.link_flair_text is None:
+        logger.info(
+            "Submission without flair: [%s] %s", submission.id, submission.title
+        )
+        # TODO: check creation date. If too old, discard; else, keep as is
+        return None
+
+    if submission.selftext == "[removed]":
+        logger.info("Submission was removed: [%s] %s", submission.id, submission.title)
+        return None
+
+    if not submission.link_flair_text in RedditAdvertType.to_parse():
+        return None
+
+    extra = parse_submission_extra(submission)
+    if extra is None:
+        logger.warning(
+            "Cannot parse extra from submission: [%s] %s",
+            submission.id,
+            submission.title,
+        )
+        return None
+
+    created_utc_dt = datetime.utcfromtimestamp(submission.created_utc).replace(
+        tzinfo=tz.UTC
+    )
+
+    reddit_advert = RedditAdvert(
+        reddit_id=submission.id,
+        title=submission.title,
+        ad_type=submission.link_flair_text,
+        created_utc=created_utc_dt,
+        author=submission.author.name,
+        full_text=submission.selftext,
+        extra=extra,
+    )
+
+    return reddit_advert

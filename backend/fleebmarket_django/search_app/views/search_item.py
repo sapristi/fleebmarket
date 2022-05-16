@@ -1,18 +1,45 @@
 import logging
+from datetime import datetime
+from typing import Optional
 
-from fastapi import APIRouter, Depends
+from django.http import JsonResponse
+from pydantic import BaseModel
 from search_app.meilisearch_utils import MAdvertsItemsIndex
-from search_app.models.reddit_advert_item import RedditAdvertItem
+from search_app.models import RedditAdvertItem, RedditAdvertType
 
 from ..schemas.reddit_advert_item import RedditAdvertItemResponse
-from .deps import close_old_connections
 
 logger = logging.getLogger(__name__)
-router = APIRouter(prefix="/search_item", dependencies=[Depends(close_old_connections)])
 
 
-@router.get("/", response_model=list[RedditAdvertItemResponse])
-def search_item(
+class SearchItemQuery(BaseModel):
+    terms: str = ""
+    region: Optional[str] = None
+    sold: bool
+    limit: int = 20
+    offset: int = 0
+
+
+class RedditAdvertItemResponse(BaseModel):
+    type: str = "advert_item"
+    id: int
+    reddit_id: str
+    price: int
+    sold: bool
+    ad_type: Optional[RedditAdvertType]
+    created_utc: datetime
+    full_text: str
+    author: str
+    extra: dict
+
+
+def search_item(request):
+    query = SearchItemQuery.parse_obj(request.GET)
+    ads = search_item_wrapped(**query.dict())
+    return JsonResponse([ad.dict() for ad in ads])
+
+
+def search_item_wrapped(
     terms: str = "",
     region: str = "",
     sold: str = "",
