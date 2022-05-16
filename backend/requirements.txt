@@ -10,7 +10,6 @@ django_filter
 django-cors-headers
 more-itertools
 psycopg2
-fastapi
 uvicorn
 django-extensions
 django-simple-bulma

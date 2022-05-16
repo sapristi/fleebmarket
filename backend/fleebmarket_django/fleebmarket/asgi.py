@@ -19,14 +19,8 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "fleebmarket.settings")
 application = get_asgi_application()
 
 
-from fastapi import APIRouter, FastAPI
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from search_app.api import search, search_item
-
-router = APIRouter(prefix="/api")
-router.include_router(search.router)
-router.include_router(search_item.router)
-
 
 app = FastAPI(title="fleebmarket", openapi_url=f"/openapi.json")
 
@@ -39,5 +33,4 @@ if settings.DEBUG:
         allow_headers=["*"],
     )
 
-app.include_router(router)
 app.mount("/", application)
