@@ -1,5 +1,6 @@
 #! /usr/bin/fish
 
+
 set -x DBUS_SESSION_BUS_ADDRESS unix:path=/run/user/(id -u)/bus
 set -x XDG_RUNTIME_DIR /run/user/(id -u)
 
@@ -9,10 +10,9 @@ if [ -L $current ]
    set current (readlink $current)
 end
 
-set workdir (dirname $current)
+set workdir (dirname $current)/../backend
 cd $workdir
 
 source ./.venv/bin/activate.fish
 
-
-python fleebmarket_django/manage.py $argv
+python manage.py $argv

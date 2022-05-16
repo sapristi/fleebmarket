@@ -19,13 +19,9 @@ from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 ROOT_DIR = BASE_DIR.parent
-
 DATA_DIR = Path(os.environ["DATA_DIR"])
 
 print("Dirs: root=", ROOT_DIR, "base=", BASE_DIR, "data=", DATA_DIR)
-
-
-MOCK_DATA_DIR = ROOT_DIR / "mock_data"
 
 
 # Quick-start development settings - unsuitable for production

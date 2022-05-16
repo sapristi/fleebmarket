@@ -3,7 +3,7 @@ Description=Fleebmarket backend[%i]
 
 [Service]
 EnvironmentFile=/fleebmarket_%i/.env
-ExecStart=/fleebmarket_%i/backend/scripts/start_uvicorn.sh
+ExecStart=/fleebmarket_%i/scripts/start_uvicorn.sh
 Type=simple
 NotifyAccess=all
 Restart=always
