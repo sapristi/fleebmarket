@@ -2,6 +2,7 @@ from datetime import datetime
 from typing import Any, Optional
 
 from django.http import JsonResponse
+from django.http.request import HttpRequest
 from pydantic import BaseModel
 from search_app.meilisearch_utils import MAdvertsIndex
 from search_app.models import RedditAdvert, RedditAdvertType
@@ -31,10 +32,12 @@ class RedditAdvertResponse(BaseModel):
         orm_mode = True
 
 
-def search(request):
-    query = SearchQuery.parse_obj(request.GET)
+def search(request: HttpRequest):
+    query = SearchQuery.parse_obj(request.GET.dict())
     ads = search_wrapped(**query.dict())
-    return JsonResponse([RedditAdvertResponse.from_orm(ad).dict() for ad in ads])
+    return JsonResponse(
+        [RedditAdvertResponse.from_orm(ad).dict() for ad in ads], safe=False
+    )
 
 
 def search_wrapped(

@@ -59,6 +59,7 @@ urlpatterns = [
     path("survey/", include("survey.urls")),
     path("search/", include("search_app.urls")),
     path("search_item/", include("search_app.urls")),
+    path("api/", include("search_app.api_urls")),
     path("blog/", include("simpleblog.urls")),
     path("alerts/", include("alerts.urls")),
     path(

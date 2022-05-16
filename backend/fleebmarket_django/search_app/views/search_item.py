@@ -3,11 +3,10 @@ from datetime import datetime
 from typing import Optional
 
 from django.http import JsonResponse
+from django.http.request import HttpRequest
 from pydantic import BaseModel
 from search_app.meilisearch_utils import MAdvertsItemsIndex
 from search_app.models import RedditAdvertItem, RedditAdvertType
-
-from ..schemas.reddit_advert_item import RedditAdvertItemResponse
 
 logger = logging.getLogger(__name__)
 
@@ -33,10 +32,10 @@ class RedditAdvertItemResponse(BaseModel):
     extra: dict
 
 
-def search_item(request):
-    query = SearchItemQuery.parse_obj(request.GET)
+def search_item(request: HttpRequest):
+    query = SearchItemQuery.parse_obj(request.GET.dict())
     ads = search_item_wrapped(**query.dict())
-    return JsonResponse([ad.dict() for ad in ads])
+    return JsonResponse([ad.dict() for ad in ads], safe=False)
 
 
 def search_item_wrapped(
