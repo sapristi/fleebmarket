@@ -1,15 +1,13 @@
 import logging
 from typing import List
 
+from advert_parsing import parse
 from django.db import models
 from django.db.models.fields.json import JSONField
 from search_app.meilisearch_utils import MAdvertsIndex
 
-from advert_parsing import parse
-
 from .common import RedditAdvertType
 from .duplicates import duplicate_offers
-from .parse import parse_mechmarket_advert
 
 logger = logging.getLogger(__name__)
 
@@ -33,19 +31,6 @@ class RedditAdvert(models.Model):
     last_updated = models.DateTimeField(auto_now=True, db_index=True)
     extra = JSONField(blank=True, null=True)
     is_duplicate = models.BooleanField(default=False, db_index=True)
-
-    def update_extra(self):
-        extra = parse_mechmarket_advert(self.ad_type, self.title, self.full_text)
-        self.extra = extra
-        try:
-            self.save()
-        except ValueError as exc:
-            from django.forms.models import model_to_dict
-
-            logger.error(
-                "Failed saving model: %s; model data is %s", self, model_to_dict(self)
-            )
-            raise exc from None
 
     def serialize_meilisearch(self):
         if not self.ad_type in (

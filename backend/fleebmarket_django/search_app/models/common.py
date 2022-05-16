@@ -29,3 +29,14 @@ class RedditAdvertType(str, ChoiceEnum):
             RedditAdvertType.Giveaway,
             RedditAdvertType.Any,
         ]
+
+    @staticmethod
+    def to_parse() -> list["RedditAdvertType"]:
+        return [
+            RedditAdvertType.Selling,
+            RedditAdvertType.Sold,
+            RedditAdvertType.Trading,
+            RedditAdvertType.Traded,
+            RedditAdvertType.Buying,
+            RedditAdvertType.Purchased,
+        ]

@@ -21,10 +21,9 @@ application = get_asgi_application()
 
 from fastapi import APIRouter, FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from search_app.api import scrapper, search, search_item
+from search_app.api import search, search_item
 
 router = APIRouter(prefix="/api")
-router.include_router(scrapper.router)
 router.include_router(search.router)
 router.include_router(search_item.router)
 
