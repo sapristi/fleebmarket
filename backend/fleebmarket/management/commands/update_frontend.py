@@ -15,6 +15,6 @@ logger = ml.getLogger()
 def handle(verbosity):
     ml.set_level_from_verbosity(verbosity)
 
-    frontend_dir = settings.ROOT_DIR / ".." / "frontend"
+    frontend_dir = settings.ROOT_DIR / "frontend"
     subprocess.run(["pnpm", "build"], cwd=str(frontend_dir))
     call_command("collectstatic")

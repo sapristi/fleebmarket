@@ -16,21 +16,8 @@ from . import runtime_setup
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "fleebmarket.settings")
 
-application = get_asgi_application()
+app = get_asgi_application()
 
 
-from fastapi import FastAPI
-from fastapi.middleware.cors import CORSMiddleware
 
-app = FastAPI(title="fleebmarket", openapi_url=f"/openapi.json")
 
-if settings.DEBUG:
-    app.add_middleware(
-        CORSMiddleware,
-        allow_origins="*",
-        allow_credentials=True,
-        allow_methods=["*"],
-        allow_headers=["*"],
-    )
-
-app.mount("/", application)

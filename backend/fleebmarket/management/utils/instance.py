@@ -127,17 +127,17 @@ class Service:
     def running_since(self) -> Optional[timedelta]:
         if not self.running:
             return None
-        res = self.ctl("show", "-P", "ActiveEnterTimestamp", check=True)
+        res = self.ctl("show", "-p", "ActiveEnterTimestamp", check=True)
         timestamp = res.stdout.decode().strip()
         if not timestamp:
             return None
-        running_since_abs = datetime.strptime(timestamp, "%a %Y-%m-%d %H:%M:%S %Z")
+        running_since_abs = datetime.strptime(timestamp, "ActiveEnterTimestamp=%a %Y-%m-%d %H:%M:%S %Z")
         return datetime.now() - running_since_abs
 
     @property
     def n_restarts(self) -> int:
-        res = self.ctl("show", "-P", "NRestarts", check=True)
-        return int(res.stdout)
+        res = self.ctl("show", "-p", "NRestarts", check=True)
+        return int(res.stdout.split(b"NRestarts=")[1])
 
     def get_status(self, wait):
         if wait and self.running_since is not None:
