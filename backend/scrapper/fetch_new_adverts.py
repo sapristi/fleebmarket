@@ -5,6 +5,7 @@ from praw.models import Submission
 from scrapper.common import REDDIT_CLIENT
 from scrapper.parse import parse_submission
 from search_app import models
+from search_app.meilisearch_utils import flush_all
 from search_app.models import RedditAdvert
 
 logger = logging.getLogger(__name__)
@@ -102,6 +103,7 @@ def fetch_new_adverts(subreddit: str, post_limit: int = 1000):
 
         added_reddit_adverts.append(reddit_advert)
     logger.info("Saved %s adverts.", len(added_reddit_adverts))
+    flush_all()
     return added_reddit_adverts
 
     # add alerts tasks: we might want to do that in another function to be able to run this
