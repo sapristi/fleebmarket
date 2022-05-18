@@ -1,7 +1,3 @@
 {
-    "include": ["fleebmarket_django"],
-    "executionEnvironments": [
-        {"root": "fleebmarket_django"}
-    ],
     "venv": "fleebmarket_django"
 }
