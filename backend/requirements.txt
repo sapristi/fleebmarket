@@ -1,7 +1,7 @@
 django-allauth==0.44.0
 Django==3.2.2
 django-multiselectfield==0.1.12
-Pillow==8.0.1
+Pillow
 python-dotenv
 git+https://github.com/sapristi/django-simple-blog.git
 meilisearch>=0.18.0,<0.19
@@ -28,3 +28,4 @@ git+https://github.com/sapristi/misaka.git@master
 
 python-dateutil
 praw
+pydantic

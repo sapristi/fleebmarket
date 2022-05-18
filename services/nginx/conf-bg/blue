@@ -1,5 +1,5 @@
 location /static/ {
-    root  /data/fleebmarket_django_blue/;
+    root  /data/backend_blue/;
 }
 
 location / {
@@ -12,5 +12,5 @@ location / {
 }
 
 location = /502.html {
-    root  /data/fleebmarket_django_blue/static/maintenance_pages;
+    root  /data/backend_blue/static/maintenance_pages;
 }
