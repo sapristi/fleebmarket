@@ -23,7 +23,9 @@ DATABASES = {
 }
 
 
-syslog_identifier = f"Backend[{os.environ['INSTANCE_NAME']}]"
+syslog_identifier = (
+    f"{os.environ.get('SYSLOG_NAME', 'Backend')}[{os.environ['INSTANCE_NAME']}]"
+)
 default_logger_conf = {
     "handlers": ["journald"],
     "level": "INFO",
