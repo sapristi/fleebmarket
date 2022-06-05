@@ -3,6 +3,7 @@ Description=Fleebmarket cronjobs[%i]
 
 [Service]
 EnvironmentFile=/fleebmarket_%i/.env
+Environment=SYSLOG_NAME=Cronjobs
 ExecStart=/fleebmarket_%i/scripts/manage.fish run_huey -w 2
 Restart=always
 RestartSec=5
