@@ -28,5 +28,6 @@ def handle(verbosity, since_days):
         logger.info("Found %s adverts in db", len(adverts))
         for advert in tqdm(adverts):
             advert.parse_items()
+            advert.save()
     logger.info("Adverts parsed anew")
     flush_all()
