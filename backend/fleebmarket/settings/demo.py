@@ -69,3 +69,5 @@ LOGGING = {
         #     'uvicorn': default_logger_conf,
     },
 }
+
+DEBUG = os.environ.get("DEBUG", "").lower() == "true"
