@@ -16,15 +16,23 @@ logger = ml.getLogger()
 @djclick.command()
 @djclick.pass_verbosity
 @djclick.option(
-    "--since-days", type=int, required=True, help="Create and setup indices."
+    "--since-days", type=int, required=False, help="Create and setup indices."
 )
-def handle(verbosity, since_days):
-    since = datetime.now() - timedelta(days=since_days)
+@djclick.option(
+    "--parse-all",
+    is_flag=True,
+    help="Parse all adverts, not only those of the right type.",
+)
+def handle(verbosity, since_days, parse_all):
     ml.set_level_from_verbosity(verbosity)
     with logging_redirect_tqdm(loggers=[ml.getLogger()]):
-        adverts = RedditAdvert.objects.filter(
-            created_utc__gt=since, ad_type__in=TypesToItemize
-        )
+
+        adverts = RedditAdvert.objects.all()
+        if since_days:
+            since = datetime.now() - timedelta(days=since_days)
+            adverts = adverts.filter(created_utc__gt=since)
+        if not parse_all:
+            adverts = adverts.filter(ad_type__in=TypesToItemize)
         logger.info("Found %s adverts in db", len(adverts))
         for advert in tqdm(adverts):
             advert.parse_items()
