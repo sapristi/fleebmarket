@@ -9,6 +9,7 @@ from praw.models import Submission
 from scrapper.common import REDDIT_CLIENT
 from scrapper.parse import parse_submission
 from search_app import models
+from search_app.meilisearch_utils import flush_all
 from search_app.models import RedditAdvert
 
 logger = logging.getLogger(__name__)
@@ -128,3 +129,5 @@ def update_adverts(update_batch_size):
 
     for old_advert in to_update:
         old_advert.save()
+
+    flush_all()
