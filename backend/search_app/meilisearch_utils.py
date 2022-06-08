@@ -6,6 +6,7 @@ from typing import Iterable
 import meilisearch
 from django.conf import settings
 from pydantic import BaseModel
+from pydantic.fields import Field
 
 logger = logging.getLogger(__name__)
 
@@ -40,9 +41,9 @@ class MeiliIndex(BaseModel):
     filterableAttributes: list[str]
 
     # do not initialize those fields; they are used by the instances
-    to_add: list[dict] = []
-    to_update: list[dict] = []
-    to_delete: list[str] = []
+    to_add: list[dict] = Field(default_factory=list)
+    to_update: list[dict] = Field(default_factory=list)
+    to_delete: list[str] = Field(default_factory=list)
 
     def client(self):
         return meili_client.index(self.name)
