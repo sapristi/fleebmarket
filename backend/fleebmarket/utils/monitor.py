@@ -2,9 +2,7 @@ import re
 import socket
 from datetime import datetime, timedelta
 
-import djclick
 from cysystemd.reader import JournalOpenMode, JournalReader, Rule
-from fleebmarket.utils import monitor
 
 
 def collect_journal_messages(
@@ -46,22 +44,35 @@ def collect_data(now, since_hours: int):
     return compute_data(reader)
 
 
-@djclick.group()
-def group():
-    """Collect alerts."""
-    pass
-
-
-@group.command()
-@djclick.option("--since-hours", type=int, default=1)
 def show(
     since_hours: int,
 ):
     """Print stats to stdout."""
-    monitor.show(since_hours)
+    since = datetime.now() - timedelta(hours=since_hours, minutes=5)
+    reader = collect_journal_messages(since)
+    data = compute_data(reader)
+    print(data)
 
 
-@group.command()
 def put():
     """Send stats to graphene collector."""
-    monitor.put()
+    now = datetime.now()
+    hourly_data = collect_data(now, 1)
+    daily_data = collect_data(now, 24)
+    weekly_data = collect_data(now, 168)
+
+    addr = ("127.0.0.1", 2003)
+    ts = int(now.timestamp())
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+        s.connect(addr)
+        data = b""
+        data += f"usage.hourly.total {hourly_data['nb_total']} {ts}\n".encode()
+        data += f"usage.hourly.distinct {hourly_data['nb_distinct']} {ts}\n".encode()
+
+        data += f"usage.daily.total {daily_data['nb_total']} {ts}\n".encode()
+        data += f"usage.daily.distinct {daily_data['nb_distinct']} {ts}\n".encode()
+
+        data += f"usage.weekly.total {weekly_data['nb_total']} {ts}\n".encode()
+        data += f"usage.weekly.distinct {weekly_data['nb_distinct']} {ts}\n".encode()
+        s.sendall(data)
+    print("Sent data")
