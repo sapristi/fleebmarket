@@ -15,7 +15,7 @@ DATABASES = {
         "NAME": "fleebmarket",
         "USER": "fleebmarket",
         "PASSWORD": os.environ["FLEEBMARKET_POSTGRES_PASSWORD"],
-        "HOST": "",
+        "HOST": os.environ.get("POSTGRES_HOST", ""),
         "PORT": "",
         # 'HOST': "127.0.0.1",
         # 'PORT': '5432',
