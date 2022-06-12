@@ -44,14 +44,14 @@ def collect_data(now, since_hours: int):
     return compute_data(reader)
 
 
-def show(
+def get(
     since_hours: int,
 ):
     """Print stats to stdout."""
     since = datetime.now() - timedelta(hours=since_hours, minutes=5)
     reader = collect_journal_messages(since)
     data = compute_data(reader)
-    print(data)
+    return data
 
 
 def put():
@@ -76,3 +76,19 @@ def put():
         data += f"usage.weekly.distinct {weekly_data['nb_distinct']} {ts}\n".encode()
         s.sendall(data)
     print("Sent data")
+
+def put_to_disk():
+    """Save stats to files in /tmp."""
+    now = datetime.now()
+    hourly_data = collect_data(now, 1)
+    daily_data = collect_data(now, 24)
+    weekly_data = collect_data(now, 168)
+
+    with open("/tmp/monitorix_hourly_distinct_ip", "w") as f:
+        f.write(str(hourly_data['nb_distinct']))
+
+    with open("/tmp/monitorix_daily_distinct_ip", "w") as f:
+        f.write(str(daily_data['nb_distinct']))
+
+    with open("/tmp/monitorix_weekly_distinct_ip", "w") as f:
+        f.write(str(weekly_data['nb_distinct']))

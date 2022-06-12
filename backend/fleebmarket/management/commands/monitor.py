@@ -58,10 +58,16 @@ def show(
     since_hours: int,
 ):
     """Print stats to stdout."""
-    monitor.show(since_hours)
+    stats = monitor.get(since_hours)
+    print(stats)
 
 
 @group.command()
 def put():
     """Send stats to graphene collector."""
     monitor.put()
+
+@group.command()
+def put_to_disk():
+    """Save stats to files in /tmp."""
+    monitor.put_to_disk()

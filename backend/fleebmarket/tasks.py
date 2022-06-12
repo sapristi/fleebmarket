@@ -18,5 +18,5 @@ def send_alerts():
 
 
 @periodic_task(crontab(minute="00"))
-def send_monitor_metrics():
-    monitor.put()
+def save_monitor_metrics():
+    monitor.put_to_disk()
