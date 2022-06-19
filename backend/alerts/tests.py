@@ -58,7 +58,13 @@ def test_find_alerts(alerts_db, meili_mock):
         title="title1",
         full_text="test",
         ad_type=RedditAdvertType.Selling,
-        extra={"region": Region.EU},
+        extra={
+            "region": Region.EU,
+            "text": "",
+            "wants": "",
+            "offers": "",
+            "country": "",
+        },
         created_utc=datetime.now(),
     )
     advert_0.save()
