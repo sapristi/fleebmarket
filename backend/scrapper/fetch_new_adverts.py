@@ -68,18 +68,16 @@ def get_latest_submissions(
     return sorted(res, key=lambda sub: sub.created_utc)
 
 
-def fetch_new_adverts(subreddit: str, post_limit: int = 1000):
-    last_valid_reddit_id = get_last_valid_reddit_id()
-    logger.info("Last advert id is [%s]", last_valid_reddit_id)
-    submissions = get_latest_submissions(subreddit, last_valid_reddit_id, post_limit)
+def add_submissions(submissions: list[Submission]):
+    added_adverts = []
 
-    added_reddit_adverts = []
     for submission in submissions:
+        if submission is None:
+            continue
         reddit_advert = parse_submission(submission)
         if reddit_advert is None:
             continue
-
-        if RedditAdvert.objects.filter(reddit_id=reddit_advert.reddit_id).exists():
+        if RedditAdvert.objects.filter(reddit_id=advert.reddit_id).exists():
             logger.warning(
                 "Advert with reddit_id %s already exists; skipping",
                 reddit_advert.reddit_id,
@@ -100,12 +98,14 @@ def fetch_new_adverts(subreddit: str, post_limit: int = 1000):
             logger.exception(
                 "Failed parsing items from advert [%s]", reddit_advert.reddit_id
             )
-
-        added_reddit_adverts.append(reddit_advert)
-    logger.info("Saved %s adverts.", len(added_reddit_adverts))
+        added_adverts.append(reddit_advert)
+    logger.info("Saved %s adverts.", len(added_adverts))
     flush_all()
-    return added_reddit_adverts
 
-    # add alerts tasks: we might want to do that in another function to be able to run this
-    # function as a command
-    background_tasks.add_task(alert_task, added_adverts)
+
+def fetch_new_adverts(subreddit: str, post_limit: int = 1000):
+    """Fetch new adverts from reddit, and add them to the db."""
+    last_valid_reddit_id = get_last_valid_reddit_id()
+    logger.info("Last advert id is [%s]", last_valid_reddit_id)
+    submissions = get_latest_submissions(subreddit, last_valid_reddit_id, post_limit)
+    add_submissions(submissions)

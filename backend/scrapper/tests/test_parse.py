@@ -1,4 +1,4 @@
-from search_app.models.parse import Link, parse_mechmarket_body
+from scrapper.parse import Link, parse_mechmarket_body
 
 body_1 = """
 -Discounted prices-  https://imgur.com/a/fbsRAYv
