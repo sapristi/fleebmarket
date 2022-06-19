@@ -1,6 +1,7 @@
 import logging
 from typing import List, Optional
 
+from alerts.actions import send_alerts
 from praw.models import Submission
 from scrapper.common import REDDIT_CLIENT
 from scrapper.parse import parse_submission
@@ -101,6 +102,7 @@ def add_submissions(submissions: list[Submission]):
         added_adverts.append(reddit_advert)
     logger.info("Saved %s adverts.", len(added_adverts))
     flush_all()
+    send_alerts(added_adverts)
 
 
 def fetch_new_adverts(subreddit: str, post_limit: int = 1000):

@@ -2,6 +2,7 @@ from collections import defaultdict
 
 from django.template.loader import render_to_string
 from fuzzywuzzy import fuzz
+from huey.contrib.djhuey import db_task
 from search_app.models import RedditAdvert
 
 from .models import Alert, AlertAdType, Region
@@ -35,7 +36,8 @@ def find_alerts(adverts: list[RedditAdvert]):
     return to_send
 
 
-def alert_task(adverts: list[RedditAdvert]):
+@db_task(retries=5, retry_delay=60)
+def send_alerts(adverts: list[RedditAdvert]):
     to_send = find_alerts(adverts)
 
     for user, data in to_send.items():
