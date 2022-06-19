@@ -78,7 +78,7 @@ def add_submissions(submissions: list[Submission]):
         reddit_advert = parse_submission(submission)
         if reddit_advert is None:
             continue
-        if RedditAdvert.objects.filter(reddit_id=advert.reddit_id).exists():
+        if RedditAdvert.objects.filter(reddit_id=reddit_advert.reddit_id).exists():
             logger.warning(
                 "Advert with reddit_id %s already exists; skipping",
                 reddit_advert.reddit_id,
