@@ -1,3 +1,4 @@
+import time
 from datetime import datetime, timedelta
 
 import djclick
@@ -7,7 +8,7 @@ from utils import ManagementLogging
 
 ml = ManagementLogging()
 
-from search_app.meilisearch_utils import flush_all
+from search_app.meilisearch_utils import flush_all, get_unfinished_tasks
 from search_app.models import RedditAdvert, TypesToItemize
 
 logger = ml.getLogger()
@@ -35,7 +36,17 @@ def handle(verbosity, since_days, parse_all):
             adverts = adverts.filter(ad_type__in=TypesToItemize)
         logger.info("Found %s adverts in db", len(adverts))
         for advert in tqdm(adverts):
-            advert.parse_items()
             advert.save()
     logger.info("Adverts parsed anew")
     flush_all()
+
+    total_meili_tasks = len(get_unfinished_tasks())
+    done_meili_task = 0
+    pbar = tqdm(total=total_meili_tasks)
+    while True:
+        current_meili_tasks = len(get_unfinished_tasks())
+        done_meili_task = total_meili_tasks - current_meili_tasks
+        pbar.update(done_meili_task)
+        if current_meili_tasks == 0:
+            break
+        time.sleep(0.2)

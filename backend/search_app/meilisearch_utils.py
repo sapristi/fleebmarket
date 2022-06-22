@@ -140,3 +140,9 @@ def is_indexing():
     """Check if meilisearch is indexing"""
     tasks = meili_client.get_tasks()
     return all(task["finishedAt"] is not None for task in tasks["results"])
+
+
+def get_unfinished_tasks():
+    """Check if meilisearch is indexing"""
+    tasks = meili_client.get_tasks()
+    return [task for task in tasks["results"] if task["finishedAt"] is None]
