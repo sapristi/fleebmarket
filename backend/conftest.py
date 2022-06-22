@@ -13,4 +13,5 @@ def meili_mock(monkeypatch):
         search_app.meilisearch_utils.MAdvertsItemsIndex, "name", "TEST_AdvertItems"
     )
 
+    search_app.meilisearch_utils.clear_meilisearch()
     search_app.meilisearch_utils.initialise_meilisearch()

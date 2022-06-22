@@ -4,6 +4,8 @@ from typing import List
 from advert_parsing import parse
 from django.db import models
 from django.db.models.fields.json import JSONField
+from django.db.models.signals import pre_delete
+from django.dispatch import receiver
 from search_app.meilisearch_utils import MAdvertsIndex
 
 from .common import RedditAdvertType
@@ -67,6 +69,10 @@ class RedditAdvert(models.Model):
         self.full_text = self.full_text.replace("\x00", "")
         super(RedditAdvert, self).save(*args, **kwargs)
         self.save_meilisearch()
+        try:
+            self.parse_items()
+        except Exception as exc:
+            logger.exception("Failed parsing items from advert [%s]", self.reddit_id)
 
     def delete(self, *args, **kwargs):
         MAdvertsIndex.add_to_delete(self.reddit_id)
@@ -83,6 +89,7 @@ class RedditAdvert(models.Model):
             RedditAdvertItem,
         )
 
+        print("WILL DLELET", list(RedditAdvertItem.objects.filter(reddit_advert=self)))
         RedditAdvertItem.objects.filter(reddit_advert=self).delete()
         if not self.ad_type in TypesToItemize:
             return
@@ -135,3 +142,11 @@ class RedditAdvert(models.Model):
             advert.is_duplicate = True
             advert.save()
         logger.debug(f"[{self.reddit_id}] Marked {len(duplicates)} as duplicates")
+
+    def mark_updated(self):
+        super(RedditAdvert, self).save()
+
+
+@receiver(pre_delete, sender=RedditAdvert)
+def delete_meilisearch(sender, instance, using, **kwargs):
+    MAdvertsIndex.add_to_delete(instance.id)

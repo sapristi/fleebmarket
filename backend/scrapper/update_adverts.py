@@ -125,7 +125,7 @@ def update_adverts(update_batch_size):
 
     for reddit_id in unchanged:
         reddit_advert = RedditAdvert.objects.get(reddit_id=reddit_id)
-        reddit_advert.save()
+        reddit_advert.mark_updated()
 
     for old_advert in to_update:
         old_advert.save()

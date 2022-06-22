@@ -2,6 +2,8 @@ import logging
 
 from django.db import models
 from django.db.models.fields.json import JSONField
+from django.db.models.signals import pre_delete
+from django.dispatch import receiver
 from django.utils.html import strip_tags
 from search_app.meilisearch_utils import MAdvertsItemsIndex
 
@@ -35,10 +37,12 @@ class RedditAdvertItem(models.Model):
                 res[k] = v
         return res
 
-    def delete(self, *args, **kwargs):
-        MAdvertsItemsIndex.add_to_delete(self.id)
-        super().delete(*args, **kwargs)
-
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
+        print("")
         MAdvertsItemsIndex.add_to_add(self.serialize_meilisearch())
+
+
+@receiver(pre_delete, sender=RedditAdvertItem)
+def delete_meilisearch(sender, instance, using, **kwargs):
+    MAdvertsItemsIndex.add_to_delete(instance.id)

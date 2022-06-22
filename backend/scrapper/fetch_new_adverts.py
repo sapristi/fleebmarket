@@ -93,12 +93,6 @@ def add_submissions(submissions: list[Submission]):
             continue
 
         reddit_advert.mark_duplicates()
-        try:
-            reddit_advert.parse_items()
-        except Exception as exc:
-            logger.exception(
-                "Failed parsing items from advert [%s]", reddit_advert.reddit_id
-            )
         added_adverts.append(reddit_advert)
     logger.info("Saved %s adverts.", len(added_adverts))
     flush_all()

@@ -112,7 +112,21 @@ def initialise_meilisearch():
 
 
 def clear_meilisearch():
+    """Clear indices used."""
+    logger.info("Reseting indices")
+    indexes = meili_client.get_indexes()
+    index_names = [
+        index.uid
+        for index in indexes
+        if index.uid in (MAdvertsIndex.name, MAdvertsItemsIndex.name)
+    ]
+    logger.info("Deleting indices %s", index_names)
+    for index_name in index_names:
+        meili_client.index(index_name).delete()
 
+
+def clear_meilisearch_full():
+    """Clear all indices"""
     logger.info("Reseting meilisearch db")
 
     indexes = meili_client.get_indexes()
@@ -120,3 +134,9 @@ def clear_meilisearch():
     logger.info("Deleting indices %s", index_names)
     for index_name in index_names:
         meili_client.index(index_name).delete()
+
+
+def is_indexing():
+    """Check if meilisearch is indexing"""
+    tasks = meili_client.get_tasks()
+    return all(task["finishedAt"] is not None for task in tasks["results"])
