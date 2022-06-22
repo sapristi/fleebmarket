@@ -39,7 +39,6 @@ class RedditAdvertItem(models.Model):
 
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
-        print("")
         MAdvertsItemsIndex.add_to_add(self.serialize_meilisearch())
 
 

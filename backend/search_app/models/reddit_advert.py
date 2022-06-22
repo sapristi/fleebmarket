@@ -52,9 +52,6 @@ class RedditAdvert(models.Model):
             "created_utc": self.created_utc.timestamp(),
         }
         for key in ["text", "wants", "offers", "region", "country"]:
-            if not isinstance(self.extra[key], str):
-                print(res)
-                raise
             res[key] = self.extra[key]
         return res
 
@@ -89,7 +86,6 @@ class RedditAdvert(models.Model):
             RedditAdvertItem,
         )
 
-        print("WILL DLELET", list(RedditAdvertItem.objects.filter(reddit_advert=self)))
         RedditAdvertItem.objects.filter(reddit_advert=self).delete()
         if not self.ad_type in TypesToItemize:
             return

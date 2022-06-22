@@ -35,7 +35,6 @@ def test_update_advert():
     add_submissions(submissions)
 
     ad = RedditAdvert.objects.get(reddit_id="test0")
-    print("AD", ad.created_utc)
     assert len(RedditAdvert.objects.all().filter(reddit_id="test0")) == 1
     assert len(RedditAdvert.objects.all()) == 1
     # We set min score to 0: the ad was updated just now
@@ -104,7 +103,6 @@ def test_update_advert_w_advert_items(monkeypatch):
         time.sleep(0.1)
 
     new_advert = RedditAdvert.objects.get(reddit_id="test0")
-    print("TEXT", new_advert.full_text)
 
     advert_items = RedditAdvertItem.objects.all()
     assert advert_items[0].sold == True
