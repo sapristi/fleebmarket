@@ -8,8 +8,12 @@ from utils import ManagementLogging
 
 ml = ManagementLogging()
 
-from search_app.meilisearch_utils import flush_all, get_unfinished_tasks
-from search_app.models import RedditAdvert, TypesToItemize
+from search_app.meilisearch_utils import (
+    MAdvertsItemsIndex,
+    flush_all,
+    get_unfinished_tasks,
+)
+from search_app.models import RedditAdvert, RedditAdvertItem, TypesToItemize
 
 logger = ml.getLogger()
 
@@ -24,7 +28,18 @@ logger = ml.getLogger()
     is_flag=True,
     help="Parse all adverts, not only those of the right type.",
 )
-def handle(verbosity, since_days, parse_all):
+@djclick.option(
+    "--reset-indices",
+    is_flag=True,
+    default=True,
+    help="Clear postgres and meiliserch indices for advert items.",
+)
+def handle(verbosity, since_days: int, parse_all: bool, reset_indices: bool):
+    if reset_indices:
+        print("Reseting indices")
+        MAdvertsItemsIndex.client().delete()
+        RedditAdvertItem.objects.all().delete()
+        MAdvertsItemsIndex.initialize()
     ml.set_level_from_verbosity(verbosity)
     with logging_redirect_tqdm(loggers=[ml.getLogger()]):
 
@@ -40,13 +55,13 @@ def handle(verbosity, since_days, parse_all):
     logger.info("Adverts parsed anew")
     flush_all()
 
-    total_meili_tasks = len(get_unfinished_tasks())
-    done_meili_task = 0
-    pbar = tqdm(total=total_meili_tasks)
+    print("Waiting for meilisearch to finish indexing...")
+    current_meili_tasks = len(get_unfinished_tasks())
+    pbar = tqdm(total=current_meili_tasks)
     while True:
-        current_meili_tasks = len(get_unfinished_tasks())
-        done_meili_task = total_meili_tasks - current_meili_tasks
-        pbar.update(done_meili_task)
+        new_current_meili_tasks = len(get_unfinished_tasks())
+        pbar.update(current_meili_tasks - new_current_meili_tasks)
+        current_meili_tasks = new_current_meili_tasks
         if current_meili_tasks == 0:
             break
         time.sleep(0.2)
