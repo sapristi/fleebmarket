@@ -14,7 +14,7 @@ logger = logging.getLogger(__name__)
 class SearchItemQuery(BaseModel):
     terms: str = ""
     region: Optional[str] = None
-    sold: Literal[""] | Literal["true"] | Literal["false"]
+    sold: Literal[""] | Literal["true"] | Literal["false"] = "false"
     limit: int = 20
     offset: int = 0
 
