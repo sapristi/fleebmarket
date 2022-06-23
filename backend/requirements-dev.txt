@@ -7,3 +7,5 @@ pytest-django
 ipython
 fuzzywuzzy-stubs
 whitenoise
+pgcli
+ipython-sql
