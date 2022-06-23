@@ -113,7 +113,14 @@ def find_price_wo_curr_in_text(text: Text, min_amount=10):
 
 
 def find_sold_token_in_text(text: Text):
-    return [("sold" in text.text.lower() or "traded" in text.text.lower())]
+    # sold followed by some letter is not matched, except when the letter is `d`
+    # (because sometimes people write soldd)
+    return [
+        (
+            bool(re.search("sold(?![a-ce-z])", text.text.lower()))
+            or "traded" in text.text.lower()
+        )
+    ]
 
 
 def find_price_token_in_text(text: Text):
