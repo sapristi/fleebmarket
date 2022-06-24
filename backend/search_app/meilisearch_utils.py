@@ -24,8 +24,6 @@ ranking_default = [
     "created_utc:desc",
 ]
 
-typo_disabled_on = ["black", "blank"]
-
 
 class MeiliTypoToleranceSettings(BaseModel):
     disableOnWords: list[str]
@@ -38,6 +36,7 @@ class MeiliIndexSettings(BaseModel):
     rankingRules: list[str] = ranking_default
     typoTolerance: MeiliTypoToleranceSettings
     filterableAttributes: list[str]
+    sortableAttributes: list[str]
 
 
 class MeiliIndex(BaseModel):
@@ -91,6 +90,7 @@ MAdvertsIndex = MeiliIndex(
         searchableAttributes=["offers", "wants", "text", "country", "region"],
         filterableAttributes=["ad_type", "region", "country"],
         typoTolerance=MeiliTypoToleranceSettings(disableOnWords=["black", "blank"]),
+        sortableAttributes=["created_utc"],
     ),
     pkey="reddit_id",
 )
@@ -100,6 +100,7 @@ MAdvertsItemsIndex = MeiliIndex(
         searchableAttributes=["text", "country", "region"],
         filterableAttributes=["ad_type", "region", "sold"],
         typoTolerance=MeiliTypoToleranceSettings(disableOnWords=["black", "blank"]),
+        sortableAttributes=["created_utc", "price"],
     ),
     pkey="pkey",
 )
