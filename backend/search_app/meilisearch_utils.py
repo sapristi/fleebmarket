@@ -1,7 +1,5 @@
 import logging
-import os
 import pathlib
-from typing import Iterable
 
 import meilisearch
 from django.conf import settings
@@ -14,7 +12,7 @@ current_dir = pathlib.Path(__file__).parent.absolute()
 with open(current_dir / "stopwords") as f:
     stop_words = f.readlines()
 
-meilisearch_host = os.environ["MEILISEARCH_HOST"]
+meilisearch_host = settings.MEILISEARCH["host"]
 meili_client = meilisearch.Client(meilisearch_host, timeout=5)
 
 ranking_default = [
@@ -26,19 +24,26 @@ ranking_default = [
     "created_utc:desc",
 ]
 
+typo_disabled_on = ["black", "blank"]
+
+
+class MeiliTypoToleranceSettings(BaseModel):
+    disableOnWords: list[str]
+
 
 class MeiliIndexSettings(BaseModel):
     searchableAttributes: list[str]
     # displayedAttributes: list[str] = []
     stopWords: list[str] = stop_words
     rankingRules: list[str] = ranking_default
+    typoTolerance: MeiliTypoToleranceSettings
+    filterableAttributes: list[str]
 
 
 class MeiliIndex(BaseModel):
     name: str
     settings: MeiliIndexSettings
     pkey: str
-    filterableAttributes: list[str]
 
     # do not initialize those fields; they are used by the instances
     to_add: list[dict] = Field(default_factory=list)
@@ -57,11 +62,7 @@ class MeiliIndex(BaseModel):
         else:
             logger.info(f"Index {self.name} already exists")
 
-        # if not self.pkey in self.settings.displayedAttributes:
-        #     self.settings.displayedAttributes.append(self.pkey)
-
         self.client().update_settings(self.settings.dict())
-        self.client().update_filterable_attributes(self.filterableAttributes)
 
     def add_to_update(self, document: dict):
         self.to_update.append(document)
@@ -87,16 +88,20 @@ class MeiliIndex(BaseModel):
 MAdvertsIndex = MeiliIndex(
     name="Adverts",
     settings=MeiliIndexSettings(
-        searchableAttributes=["offers", "wants", "text", "country", "region"]
+        searchableAttributes=["offers", "wants", "text", "country", "region"],
+        filterableAttributes=["ad_type", "region", "country"],
+        typoTolerance=MeiliTypoToleranceSettings(disableOnWords=["black", "blank"]),
     ),
     pkey="reddit_id",
-    filterableAttributes=["ad_type", "region", "country"],
 )
 MAdvertsItemsIndex = MeiliIndex(
     name="AdvertItems",
-    settings=MeiliIndexSettings(searchableAttributes=["text", "country", "region"]),
+    settings=MeiliIndexSettings(
+        searchableAttributes=["text", "country", "region"],
+        filterableAttributes=["ad_type", "region", "sold"],
+        typoTolerance=MeiliTypoToleranceSettings(disableOnWords=["black", "blank"]),
+    ),
     pkey="pkey",
-    filterableAttributes=["ad_type", "region", "sold"],
 )
 
 

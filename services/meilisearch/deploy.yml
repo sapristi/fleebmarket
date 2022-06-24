@@ -2,12 +2,7 @@ version: "3.9"
 
 services:
   meilisearch:
-    image: fm_meilisearch
-    build:
-      context: ./
-      dockerfile: Dockerfile
-      args:
-        MEILISEARCH_ARCH: ${MEILISEARCH_ARCH:-amd64}
+    image: getmeili/meilisearch:v0.27.1
     environment: 
       MEILI_DB_PATH: /meilifiles
     volumes:
