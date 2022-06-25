@@ -1,5 +1,5 @@
 from django import forms
-from utils import ModelForm
+from fleebmarket.utils.misc import ModelForm
 
 from .models import Alert
 
