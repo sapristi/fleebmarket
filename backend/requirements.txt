@@ -13,6 +13,7 @@ psycopg2
 uvicorn
 django-extensions
 django-simple-bulma
+django-dbbackup
 
 fuzzywuzzy
 python-Levenshtein

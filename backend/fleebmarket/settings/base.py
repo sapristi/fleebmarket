@@ -53,6 +53,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "django.contrib.sites",
     "django.contrib.sitemaps",
+    "dbbackup",
     "markdown_deux",
     "pagedown",
     "simpleblog",
