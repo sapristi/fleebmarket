@@ -16,12 +16,6 @@ class ChoiceEnum(Enum):
         return ((e.name, e.value) for e in cls.__members__.values())
 
 
-class AutoEnum(ChoiceEnum):
-    @staticmethod
-    def _generate_next_value_(name, start, count, last_values):
-        return name.replace("_", " ")
-
-
 class ManagementLogging:
     def __init__(self):
         if "journald" in settings.LOGGING["handlers"]:

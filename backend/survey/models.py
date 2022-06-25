@@ -29,8 +29,8 @@ questions
 
 
 from django.db import models
+from fleebmarket.utils.misc import ChoiceEnum
 from multiselectfield import MultiSelectField
-from utils import ChoiceEnum
 
 
 class Parts(ChoiceEnum):

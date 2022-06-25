@@ -2,7 +2,7 @@ import os
 
 from .base import *
 
-ALLOWED_HOSTS += ["fleebmarket.mmill.eu", "truth.local", "localhost"]
+ALLOWED_HOSTS += ["fleebmarket.mmill.eu", "localhost"]
 
 
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
@@ -17,8 +17,6 @@ DATABASES = {
         "PASSWORD": os.environ["FLEEBMARKET_POSTGRES_PASSWORD"],
         "HOST": os.environ.get("POSTGRES_HOST", ""),
         "PORT": "",
-        # 'HOST': "127.0.0.1",
-        # 'PORT': '5432',
     }
 }
 

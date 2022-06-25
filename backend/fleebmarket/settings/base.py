@@ -21,8 +21,6 @@ BASE_DIR = Path(__file__).resolve().parent.parent.parent
 ROOT_DIR = BASE_DIR.parent
 DATA_DIR = Path(os.environ["DATA_DIR"])
 
-print("Dirs: root=", ROOT_DIR, "base=", BASE_DIR, "data=", DATA_DIR)
-
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/

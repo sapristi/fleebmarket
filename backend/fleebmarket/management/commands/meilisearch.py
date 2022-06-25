@@ -1,5 +1,5 @@
 import djclick
-from utils import ManagementLogging
+from fleebmarket.utils.misc import ManagementLogging
 
 ml = ManagementLogging()
 
@@ -17,10 +17,15 @@ logger = ml.getLogger()
 @djclick.command()
 @djclick.pass_verbosity
 @djclick.option(
-    "-a", "--action", type=djclick.Choice(["setup", "populate"]), required=True
+    "-a",
+    "--action",
+    type=djclick.Choice(["setup", "populate"]),
+    required=True,
+    help="Select action to perform",
 )
 @djclick.option("--clear/--no-clear", default=False)
 def handle(clear, action, verbosity):
+    """Manage meiliserch indices"""
     ml.set_level_from_verbosity(verbosity)
     if clear:
         clear_meilisearch()

@@ -3,7 +3,7 @@ import subprocess
 import djclick
 from django.conf import settings
 from django.core.management import call_command
-from utils import ManagementLogging
+from fleebmarket.utils.misc import ManagementLogging
 
 ml = ManagementLogging()
 

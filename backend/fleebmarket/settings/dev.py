@@ -9,7 +9,7 @@ else:
 MIDDLEWARE.insert(index + 1, "whitenoise.middleware.WhiteNoiseMiddleware")
 
 
-ALLOWED_HOSTS += ["mmill.eu", "*"]
+ALLOWED_HOSTS += ["*"]
 INSTALLED_APPS += []
 
 DEBUG = True

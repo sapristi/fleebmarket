@@ -1,7 +1,7 @@
 from django.conf import settings
 from django.db import models
+from fleebmarket.utils.misc import ChoiceEnum
 from search_app.models import RedditAdvert, RedditAdvertType
-from utils import ChoiceEnum
 
 
 class AlertAdType(str, ChoiceEnum):

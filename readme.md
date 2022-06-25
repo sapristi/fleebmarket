@@ -1,65 +1,66 @@
 # Fleebmarket
 
-This repo holds configuration files for services used by fleebmarket, and the other fleebmarket repos as git submodules.
+Fleebmarket is a frontend to the [/r/mechmarket](https://reddit.com/r/mechmarket) subreddit (seconds hand mechanical keyboards marketplace). You can reach the website at "https://fleebmarket.mmill.eu"
 
-## Local setup
+This repo holds the full source code of the  website.
 
-1. Clone this repo, then run `git submodule update --init`.
-2. Copy `.env.skeleton` to `.env`, then fill the values.
-3. Start a postgres and meilisearch instance as docker containers by running `scripts/deploy_swarm.sh`.
-4. Setup the client: 
-    1. Create a symlink from `fleebmarket_django/fleebmarket_django/search_app/static/search_app` to `meilisearch_front/build/static`.
-    2. Move to `meilisearch_client` directory and run
-       - `yarn install`
-       - `yarn build`
-5. Setup the backend:
-   1. Go to the `fleebmarket_django` directory, then follow the readme there
-   2. Run `python manage.py collectstatic`.
-   3. Run the server
-6. Setup the scrapper
+# Tech stack
+
+- Python/Django for the backend (+ Uvicorn/nginx for lower level request handling)
+- [Huey](https://github.com/coleifer/huey) for periodic tasks
+- Postgresql for the django database
+- [Meilisearch](https://github.com/meilisearch/meilisearch) for the search database
+- JavaScript/React/[Bulma](https://bulma.io/) for the frontend
+
+# Local setup
+
+1. Copy `.env.skeleton` to `.env`, then fill the values (you can ignore settings for blue/green deployment)
+2. Start a postgres and meilisearch instance as docker containers by running `scripts/deploy_swarm.sh`.
+3. Setup the [backend](./backend)
    
-Once the scrapper starts to run, the db should be populating with latests posts on /r/mechmarket.
+# Prod setup
+
+Fleebmarket is currently deployed on a bare-metal server, this sections describe the current setup.
+
+It shouldn't be too difficult to adapt, or even dockerize everything, but some settings are hard-coded.
+
+## Files
+
+- This repository is cloned in two folders, `/fleebmarket_blue` and `/fleebmarket_green`. 
+- `.env` files, with values for blue/green deployment set-up accordingly.
+- A python virtualenv is set in `backend/.venv` for each of these folders.
+- A `/data` folder contains data for the various services. It contains the following folders (some have to be manually created):
+  - `alerts`: alerts configuration
+  - `backend_blue`, `backend_green`: django static files for each of the backends
+  - `huey`: huey database
+  - `meilisearch`: meilisearch database
+  - `postgres`: postgres database
+
+## Systemd services
+
+Services are run as systemd user services. Services files are present in the [`services/systemd`](services/systemd) directory, which is symlinked on the server to `~/.config/systemd/user`. Services can then be managed with `systemd --user` commands:
+
+- `meilisearch.service` and `postgresql.service` can be enabled and started right away
+- The services for the backend and cronjobs have to be declined for Blue and Green instances:
+  - `backend@blue.service`, `backend@green.service`
+  - `cronjobs@blue.service`, `cronjobs@green.service`
+
+The alerting system works by parsing journald logs.
+
+## Nginx
+
+Nginx is the only service running as root. You can find configuration files in [`services/nginx`](services/nginx).
+
+## Monitoring
+
+Monitorix is used to monitor the server, as well as fleebmarket usage. Some settings can be found in [`services/monitorix`](services/monitorix).
+
+Additionally, a Huey job parses journald logs, and send alerts to the configured discord channel when it finds messages with level ERROR or higher ([cysystemd](https://github.com/mosquito/cysystemd) is used to give the right level to python log messages).
 
 
-### Access services
+# Create account provider apps
 
-In order to access the db, run `psql fleebmarket -U postgres`
-
-## Server inventory
-
-### Files and folders
-
-#### Programs
-
-Two folders for B/G deployment:
-
- - `/fleebmarket_blue`: blue instance (backend, scrapper)
- - `/fleebmarket_green`: green instance (backend, scrapper); to come
-
-Old instance: 
- - `/fleebmarket`
-
-#### Data
-
-Data, in the `/data` folder:
- - `backups`: db backups.
- - `fleebmarket_{blue,green}`: django data for B/G instances (if we were to use django `media`, this would be an issue; only `static` for now).
- - `meilisearch`: meilisearch database files.
- - `postgres` : postgres db files.
- - `fleebmarket`: legacy fleebmarket django data.
-
-### Services
-
-#### Fleebmarket
-
-Two services are running for the backend: `backend@blue` and `backend@green`.
-For the cronjobs, a single service should be running at any time ( either `cronjobs@blue` or `cronjobs@green`).
-
-Example commands:
-| Command                                                 | Description                                                                                                               |
-|---------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------|
-| Get service status                                      | `systemctl --user status backend@blue`                                                                                    |
-| Restart a service                                       | `systemctl --user restart backend@blue`                                                                                   |
-| Get logs                                                | `journalctl --user-unit backend@blue.service -f`                                                                          |
-| Combine logs for both services, filter `scrapper` lines | `journalctl --user-unit -u backend@blue -u backend@green -f --since "2021-10-26 16:00" \| lnav -c ":filter-out scrapper"` |
-
+ * Reddit: https://www.reddit.com/prefs/apps/
+ * discord: https://discord.com/developers/applications
+ 
+and set related field in `.env` file. This is usefull if you want to develop features related to those kind of accounts; otherwise you can log in the django admin panel at `localhost:8000/admin`, and then go back to the website.

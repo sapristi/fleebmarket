@@ -2,9 +2,9 @@ import logging
 
 import djclick
 from django.db import connection
+from fleebmarket.utils.misc import ManagementLogging
 from tqdm import tqdm
 from tqdm.contrib.logging import logging_redirect_tqdm
-from utils import ManagementLogging
 
 ml = ManagementLogging()
 

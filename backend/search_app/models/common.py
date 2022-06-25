@@ -1,4 +1,4 @@
-from utils import ChoiceEnum
+from fleebmarket.utils.misc import ChoiceEnum
 
 
 class RedditAdvertType(str, ChoiceEnum):

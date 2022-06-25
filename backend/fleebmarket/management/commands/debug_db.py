@@ -1,5 +1,5 @@
 import djclick
-from utils import ManagementLogging
+from fleebmarket.utils.misc import ManagementLogging
 
 ml = ManagementLogging()
 
