@@ -12,7 +12,6 @@ def group():
 
 
 def reduce_decorators(decorators, target_fn):
-    reduce(lambda decorator, target_fn: decorator(target_fn), reversed(decorators))
     if len(decorators):
         return decorators[0](reduce_decorators(decorators[1:], target_fn))
     else:
