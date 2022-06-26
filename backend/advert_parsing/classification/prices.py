@@ -98,7 +98,7 @@ def find_prices_in_text(text: Text) -> list[PriceTag]:
     return res
 
 
-def find_price_wo_curr_in_text(text: Text, min_amount=10):
+def find_price_wo_curr_in_text(text: Text, min_amount=10, max_amount=10000):
     """Find numbers in text. If a number is more than min_amount, consider it as unitless price."""
     number_only_regex = f"(?<![a-z0-9-])({number_group_regex})(?![a-z.,0-9])"
     matches = re.finditer(number_only_regex, text.text, flags=re.IGNORECASE)
@@ -107,7 +107,7 @@ def find_price_wo_curr_in_text(text: Text, min_amount=10):
         price_tag = PriceTag(
             currency=None, amount=match.group("price"), striked=text.is_striked()
         )
-        if price_tag.amount >= min_amount:
+        if price_tag.amount >= min_amount and price_tag.amount < max_amount:
             res.append(price_tag)
     return res
 
