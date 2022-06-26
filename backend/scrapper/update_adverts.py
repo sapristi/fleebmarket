@@ -1,6 +1,6 @@
 import logging
 import os
-from datetime import timedelta
+from datetime import datetime, timedelta
 from statistics import mean
 from typing import List
 
@@ -125,9 +125,11 @@ def update_adverts(update_batch_size):
 
     for reddit_id in unchanged:
         reddit_advert = RedditAdvert.objects.get(reddit_id=reddit_id)
-        reddit_advert.mark_updated()
+        reddit_advert.last_updated = timezone.now()
+        reddit_advert.save()
 
     for old_advert in to_update:
+        old_advert.last_updated = timezone.now()
         old_advert.save()
 
     flush_all()

@@ -6,6 +6,7 @@ from django.db import models
 from django.db.models.fields.json import JSONField
 from django.db.models.signals import pre_delete
 from django.dispatch import receiver
+from django.utils.timezone import now
 from search_app.meilisearch_utils import MAdvertsIndex
 
 from .common import RedditAdvertType
@@ -30,7 +31,7 @@ class RedditAdvert(models.Model):
     created_utc = models.DateTimeField(db_index=True)
     full_text = models.TextField(blank=True)
     author = models.CharField(max_length=100, db_index=True)
-    last_updated = models.DateTimeField(auto_now=True, db_index=True)
+    last_updated = models.DateTimeField(db_index=True)
     extra = JSONField(blank=True, null=True)
     is_duplicate = models.BooleanField(default=False, db_index=True)
 
@@ -64,6 +65,8 @@ class RedditAdvert(models.Model):
 
     def save(self, *args, **kwargs):
         self.full_text = self.full_text.replace("\x00", "")
+        if self.last_updated is None:
+            self.last_updated = now()
         super(RedditAdvert, self).save(*args, **kwargs)
         self.save_meilisearch()
         try:
@@ -138,9 +141,6 @@ class RedditAdvert(models.Model):
             advert.is_duplicate = True
             advert.save()
         logger.debug(f"[{self.reddit_id}] Marked {len(duplicates)} as duplicates")
-
-    def mark_updated(self):
-        super(RedditAdvert, self).save()
 
 
 @receiver(pre_delete, sender=RedditAdvert)
