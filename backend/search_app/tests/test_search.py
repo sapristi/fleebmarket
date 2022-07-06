@@ -16,12 +16,6 @@ from search_app.models.common import RedditAdvertType
 from search_app.views.search import search_wrapped
 
 advert_body = """
-|Black Randomfrankp deskmat 3x|$40 plus shipping|
-|:-|:-|
-|~~Cherry MX Hyperglide Black 70x L+F~~|~~$50 plus shipping~~ SOLD TO u/biggestchipotlefan|
-|~~Boba U4T 68g 70x stock~~|~~$60 plus shipping~~ SOLD TO u/CamStales|
-"""
-advert_body = """
 |desc|price|
 |:-|:-|
 |cherry|$50|
