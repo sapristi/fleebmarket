@@ -1,15 +1,20 @@
 import logging
+import re
 
 from django.db import models
 from django.db.models.fields.json import JSONField
 from django.db.models.signals import pre_delete
 from django.dispatch import receiver
-from django.utils.html import strip_tags
 from search_app.meilisearch_utils import MAdvertsItemsIndex
 
 from .reddit_advert import RedditAdvert
 
 logger = logging.getLogger(__name__)
+
+
+def custom_strip_tags(value):
+    """Returns the given HTML with all tags stripped."""
+    return re.sub(r"<[^>]*?>", " ", value)
 
 
 class RedditAdvertItem(models.Model):
@@ -30,7 +35,7 @@ class RedditAdvertItem(models.Model):
             "ad_type": self.reddit_advert.ad_type,
             "region": self.reddit_advert.region,
             "created_utc": self.reddit_advert.created_utc.timestamp(),
-            "text": strip_tags(self.full_text),
+            "text": custom_strip_tags(self.full_text),
         }
         for k, v in self.extra.items():
             if isinstance(v, str):
