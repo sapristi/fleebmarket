@@ -51,7 +51,7 @@ def test_add_advert():
             author=PrawAuthorMock(name="test_author"),
         ),
     ]
-    add_submissions(submissions)
+    add_submissions(submissions)  #  type: ignore
 
     assert len(RedditAdvert.objects.all().filter(reddit_id="test0")) == 1
     assert len(RedditAdvert.objects.all().filter(reddit_id="test1")) == 1

@@ -1,5 +1,4 @@
 import os
-from functools import reduce
 
 import djclick
 from fleebmarket.utils.alerts import send, show

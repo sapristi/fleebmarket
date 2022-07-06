@@ -46,7 +46,7 @@ def search_wrapped(
     region: Optional[str],
     limit: int,
     offset: int,
-):
+) -> list[RedditAdvert]:
     filters = []
     if type:
         filters.append(f"ad_type = {type}")
