@@ -7,7 +7,7 @@ from django.db.models.fields.json import JSONField
 from django.db.models.signals import pre_delete
 from django.dispatch import receiver
 from django.utils.timezone import now
-from search_app.meilisearch_utils import MAdvertsIndex
+from search_app.meilisearch_utils import MAdvert, MAdvertsIndex
 
 from .common import RedditAdvertType
 from .duplicates import duplicate_offers
@@ -46,15 +46,15 @@ class RedditAdvert(models.Model):
             return None
         if self.is_duplicate:
             return None
-        res = {
-            "source": "/r/mechmarket",
-            "reddit_id": self.reddit_id,
-            "ad_type": self.ad_type,
-            "created_utc": self.created_utc.timestamp(),
-        }
-        for key in ["text", "wants", "offers", "region", "country"]:
-            res[key] = self.extra[key]
-        return res
+        return MAdvert(
+            reddit_id=self.reddit_id,
+            ad_type=self.ad_type,
+            created_utc=self.created_utc.timestamp(),
+            **{
+                key: self.extra[key]
+                for key in ["text", "wants", "offers", "region", "country"]
+            },
+        )
 
     def save_meilisearch(self):
         self_meili = self.serialize_meilisearch()
