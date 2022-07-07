@@ -1,8 +1,10 @@
 import re
 import socket
 from datetime import datetime, timedelta
+from pathlib import Path
 
 from cysystemd.reader import JournalOpenMode, JournalReader, Rule
+from search_app.models import RedditAdvert, RedditAdvertType
 
 
 def collect_journal_messages(
@@ -56,42 +58,41 @@ def get(
     return data
 
 
-def put():
-    """Send stats to graphene collector."""
-    now = datetime.now()
-    hourly_data = collect_data(now, 1)
-    daily_data = collect_data(now, 24)
-    weekly_data = collect_data(now, 168)
+def collect_adverts_data_by_type():
+    return {
+        ad_type.name: RedditAdvert.objects.filter(ad_type=ad_type).count()
+        for ad_type in [
+            RedditAdvertType.Selling,
+            RedditAdvertType.Buying,
+            RedditAdvertType.Trading,
+        ]
+    }
 
-    addr = ("127.0.0.1", 2003)
-    ts = int(now.timestamp())
-    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-        s.connect(addr)
-        data = b""
-        data += f"usage.hourly.total {hourly_data['nb_total']} {ts}\n".encode()
-        data += f"usage.hourly.distinct {hourly_data['nb_distinct']} {ts}\n".encode()
 
-        data += f"usage.daily.total {daily_data['nb_total']} {ts}\n".encode()
-        data += f"usage.daily.distinct {daily_data['nb_distinct']} {ts}\n".encode()
-
-        data += f"usage.weekly.total {weekly_data['nb_total']} {ts}\n".encode()
-        data += f"usage.weekly.distinct {weekly_data['nb_distinct']} {ts}\n".encode()
-        s.sendall(data)
-    print("Sent data")
+def collect_adverts_data_by_region():
+    return {
+        region: RedditAdvert.objects.filter(extra__region=region).count()
+        for region in ["CA", "EU", "OTHER", "US"]
+    }
 
 
 def put_to_disk():
     """Save stats to files in /tmp."""
+    dest = Path("/tmp/monitorix")
+    dest.mkdir(exist_ok=True)
     now = datetime.now()
-    hourly_data = collect_data(now, 1)
-    daily_data = collect_data(now, 24)
-    weekly_data = collect_data(now, 168)
+    to_collect = {"hourly": 1, "daily": 24, "weekly": 168}
+    for period, nb_hours in to_collect.items():
+        data = collect_data(now, nb_hours)
+        with open(dest / f"{period}_distinct_ip", "w") as f:
+            f.write(str(data["nb_distinct"]))
+        with open(dest / f"{period}_total_ip", "w") as f:
+            f.write(str(data["nb_total"]))
 
-    with open("/tmp/monitorix_hourly_distinct_ip", "w") as f:
-        f.write(str(hourly_data["nb_distinct"]))
+    for ad_type, count in collect_adverts_data_by_type().items():
+        with open(dest / f"{ad_type}_count", "w") as f:
+            f.write(str(count))
 
-    with open("/tmp/monitorix_daily_distinct_ip", "w") as f:
-        f.write(str(daily_data["nb_distinct"]))
-
-    with open("/tmp/monitorix_weekly_distinct_ip", "w") as f:
-        f.write(str(weekly_data["nb_distinct"]))
+    for region, count in collect_adverts_data_by_region().items():
+        with open(dest / f"{region}_count", "w") as f:
+            f.write(str(count))
