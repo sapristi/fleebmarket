@@ -21,7 +21,7 @@ class AdvertIn(BaseModel):
 
 @pytest.fixture
 def alerts_db():
-    user = CustomUser.objects.create_user(
+    user = CustomUser.objects.create_user(  # type: ignore
         username="jacob", email="jacob@…", password="top_secret"
     )
     alerts = [
@@ -93,9 +93,9 @@ def test_find_alerts(alerts_db, meili_mock):
     match_0_raw = list(
         find_alerts([RedditAdvert.objects.get(reddit_id="ad1")]).values()
     )[0]
-    match_1_raw = list(find_alerts([advert_1]).values())[0]
-    match_2_raw = list(find_alerts([advert_2]).values())[0]
-    match_3_raw = list(find_alerts([advert_3]).values())[0]
+    match_1_raw = list(find_alerts([advert_1]).values())[0]  # type: ignore
+    match_2_raw = list(find_alerts([advert_2]).values())[0]  # type: ignore
+    match_3_raw = list(find_alerts([advert_3]).values())[0]  # type: ignore
 
     match_0 = [alert.terms for (alert, _, _) in match_0_raw]
     match_1 = [alert.terms for (alert, _, _) in match_1_raw]

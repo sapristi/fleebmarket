@@ -30,7 +30,9 @@ def compute_data(entries):
         if "208.115.199.25" in msg:
             continue
 
-        match = re.match("\w+: +(?P<ip>.*?):0 - .*", msg)
+        match = re.match(r"\w+: +(?P<ip>.*?):0 - .*", msg)
+        if not match:
+            continue
         ip = match.group("ip")
         ips.add(ip)
         nb_total += 1
@@ -77,6 +79,7 @@ def put():
         s.sendall(data)
     print("Sent data")
 
+
 def put_to_disk():
     """Save stats to files in /tmp."""
     now = datetime.now()
@@ -85,10 +88,10 @@ def put_to_disk():
     weekly_data = collect_data(now, 168)
 
     with open("/tmp/monitorix_hourly_distinct_ip", "w") as f:
-        f.write(str(hourly_data['nb_distinct']))
+        f.write(str(hourly_data["nb_distinct"]))
 
     with open("/tmp/monitorix_daily_distinct_ip", "w") as f:
-        f.write(str(daily_data['nb_distinct']))
+        f.write(str(daily_data["nb_distinct"]))
 
     with open("/tmp/monitorix_weekly_distinct_ip", "w") as f:
-        f.write(str(weekly_data['nb_distinct']))
+        f.write(str(weekly_data["nb_distinct"]))

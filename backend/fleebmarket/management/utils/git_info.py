@@ -56,7 +56,7 @@ def get_git_info(path):
     repo = Repo(path)
     commit = repo.commit()
     last_commit = GitCommit(
-        commit.author.name, commit.message.strip(" \n"), commit.committed_datetime
+        commit.author.name, commit.message.strip(" \n"), commit.committed_datetime  # type: ignore
     )
     return GitRepoInfo(
         repo.active_branch.name,

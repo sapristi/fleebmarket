@@ -26,6 +26,6 @@ class ProfileUpdate(UpdateView):
     # Check we can only edit current user
     def dispatch(self, request, *args, **kwargs):
         res = super().dispatch(request, *args, **kwargs)
-        if self.request.user == self.object:
+        if self.request.user == self.get_object():
             return res
         return None

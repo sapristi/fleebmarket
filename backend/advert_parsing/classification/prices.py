@@ -89,7 +89,7 @@ def find_prices_in_text(text: Text) -> list[PriceTag]:
             res.extend(
                 PriceTag(
                     currency=None,
-                    amount=match.group("price"),
+                    amount=match.group("price"),  # type: ignore
                     striked=text.is_striked(),
                 )
                 for match in matches
@@ -105,7 +105,7 @@ def find_price_wo_curr_in_text(text: Text, min_amount=10, max_amount=10000):
     res = []
     for match in matches:
         price_tag = PriceTag(
-            currency=None, amount=match.group("price"), striked=text.is_striked()
+            currency=None, amount=match.group("price"), striked=text.is_striked()  # type: ignore
         )
         if price_tag.amount >= min_amount and price_tag.amount < max_amount:
             res.append(price_tag)

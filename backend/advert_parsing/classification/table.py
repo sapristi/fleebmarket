@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import Optional, Union, get_args
+from typing import Optional, Union
 
 import more_itertools
 from advert_parsing.dataframe import DataFrame
@@ -165,7 +165,7 @@ def combined_classif(df: DataFrame) -> TableClassification:
             common_cols = set(header_classif.price_cols) & set(price_classif.price_cols)
             if len(common_cols) == 0:
                 return Failure(reason="No common col between header and price classif")
-            return ItemsTable(price_cols=common_cols, has_header=True)
+            return ItemsTable(price_cols=list(common_cols), has_header=True)
 
         elif isinstance(price_classif, Failure):
             return header_classif
