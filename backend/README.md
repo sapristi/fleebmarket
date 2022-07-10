@@ -16,8 +16,6 @@ pip install -r requirements-dev.txt
   `uvicon fleebmarket.asgi:app --reload`
 - Run tests:  
   `pytest`
-- Run cronjobs:
-  `./manage.py run_huey`
 
 ## Management commands
 

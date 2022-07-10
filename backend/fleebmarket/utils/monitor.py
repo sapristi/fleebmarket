@@ -32,7 +32,7 @@ def compute_data(entries):
         if "208.115.199.25" in msg:
             continue
 
-        match = re.match(r"\w+: +(?P<ip>.*?):0 - .*", msg)
+        match = re.match(r"(?P<ip>.*?) GET.*", msg)
         if not match:
             continue
         ip = match.group("ip")

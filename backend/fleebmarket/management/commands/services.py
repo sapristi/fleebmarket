@@ -57,9 +57,7 @@ def reset():
     print("\nNow resetting services...\n")
 
     main_instance.backend.start()
-    main_instance.cronjobs.start()
     aux_instance.backend.start()
-    aux_instance.cronjobs.stop()
 
     print("Reset done\n")
 
@@ -80,6 +78,23 @@ def restart_aux_backend():
     print("restarted\n")
     aux_instance.collect_status()
     print(aux_instance.format_terminal())
+
+
+def _swap_nginx(main_instance_name, aux_instance_name):
+    os.chdir("/etc/nginx/conf-bg")
+    os.remove("main")
+    os.remove("aux")
+    os.symlink(f"{aux_instance_name}", "main")
+    os.symlink(f"{main_instance_name}", "aux")
+    run_command(["sudo", "nginx", "-s", "reload"], True)
+
+
+@group.command()
+def swap_nginx():
+    """Swap nginx servers."""
+    main_instance = Instance.get_main()
+    aux_instance = Instance.get_aux()
+    _swap_nginx(f"{main_instance.name}", f"{aux_instance.name}")
 
 
 @group.command()
@@ -116,14 +131,7 @@ def swap(force: bool = False):
     input("Press a key to continue")
 
     print_journal("Swapping instances...")
-    main_instance.cronjobs.stop()
-    os.chdir("/etc/nginx/conf-bg")
-    os.remove("main")
-    os.remove("aux")
-    os.symlink(f"{aux_instance.name}", "main")
-    os.symlink(f"{main_instance.name}", "aux")
-    aux_instance.cronjobs.start()
-    run_command(["sudo", "nginx", "-s", "reload"], True)
+    _swap_nginx(f"{main_instance.name}", f"{aux_instance.name}")
 
     print_journal("Swap done.")
     print()

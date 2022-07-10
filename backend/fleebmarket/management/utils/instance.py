@@ -131,7 +131,9 @@ class Service:
         timestamp = res.stdout.decode().strip()
         if not timestamp:
             return None
-        running_since_abs = datetime.strptime(timestamp, "ActiveEnterTimestamp=%a %Y-%m-%d %H:%M:%S %Z")
+        running_since_abs = datetime.strptime(
+            timestamp, "ActiveEnterTimestamp=%a %Y-%m-%d %H:%M:%S %Z"
+        )
         return datetime.now() - running_since_abs
 
     @property
@@ -162,7 +164,6 @@ class Instance:
     is_main: bool
     repo_info: GitRepoInfo
     backend: Service
-    cronjobs: Service
 
     @staticmethod
     def get_main():
@@ -178,8 +179,7 @@ class Instance:
     def get(name: str, is_main: bool):
         repo_info = get_git_info(f"/fleebmarket_{name}")
         backend = Service(f"backend@{name}", should_be_running=True)
-        cronjobs = Service(f"cronjobs@{name}", should_be_running=is_main)
-        return Instance(name, is_main, repo_info, backend, cronjobs)
+        return Instance(name, is_main, repo_info, backend)
 
     @property
     def desc(self):
@@ -187,19 +187,18 @@ class Instance:
 
     def collect_status(self, wait=False):
         self.backend_status = self.backend.get_status(wait)
-        self.cronjobs_status = self.cronjobs.get_status(wait)
 
     def clear_status(self):
         self.backend_status = None
         self.cronjobs_status = None
 
     def errors(self):
-        if self.backend_status is None or self.cronjobs_status is None:
+        if self.backend_status is None:
             raise Exception("Status not collected")
-        return [*self.backend_status.errors, *self.cronjobs_status.errors]
+        return self.backend_status.errors
 
     def format_terminal(self):
-        if self.backend_status is None or self.cronjobs_status is None:
+        if self.backend_status is None:
             raise Exception("Status not collected")
         return (
             t.bright_white(f"{self.desc} instance: ")
@@ -210,6 +209,4 @@ class Instance:
             f" - {'git status':<17}: {self.repo_info.format_status()}"
             "\n"
             f" - {self.backend_status.format_terminal()}"
-            "\n"
-            f" - {self.cronjobs_status.format_terminal()}"
         )

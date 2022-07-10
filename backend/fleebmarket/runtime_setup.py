@@ -1,6 +1,7 @@
 import os
 from pathlib import Path  # Python 3.6+ only
 
+from django import setup
 from dotenv import load_dotenv
 
 root_path = Path(__file__).absolute().parent.parent.parent

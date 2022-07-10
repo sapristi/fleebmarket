@@ -3,8 +3,9 @@ Description=Fleebmarket backend[%i]
 
 [Service]
 EnvironmentFile=/fleebmarket_%i/.env
-ExecStart=/fleebmarket_%i/scripts/start_uvicorn.sh
-Type=simple
+ExecStart=/fleebmarket_%i/backend/.venv/bin/uwsgi /fleebmarket_%i/backend/uwsgi.ini --chdir /fleebmarket_%i/backend
+Type=notify
+KillSignal=SIGQUIT
 NotifyAccess=all
 Restart=always
 SyslogIdentifier=Backend[%i]
@@ -12,4 +13,3 @@ RestartSec=5
 
 [Install]
 WantedBy=default.target
-

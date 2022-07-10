@@ -6,8 +6,8 @@ This repo holds the full source code of the  website.
 
 # Tech stack
 
-- Python/Django for the backend (+ Uvicorn/nginx for lower level request handling)
-- [Huey](https://github.com/coleifer/huey) for periodic tasks
+- Python/Django for the backend (+ uwsgi/nginx for lower level request handling)
+- uwsgi is also used for the handling of periodic tasks and task queue
 - Postgresql for the django database
 - [Meilisearch](https://github.com/meilisearch/meilisearch) for the search database
 - JavaScript/React/[Bulma](https://bulma.io/) for the frontend
@@ -32,7 +32,6 @@ It shouldn't be too difficult to adapt, or even dockerize everything, but some s
 - A `/data` folder contains data for the various services. It contains the following folders (some have to be manually created):
   - `alerts`: alerts configuration
   - `backend_blue`, `backend_green`: django static files for each of the backends
-  - `huey`: huey database
   - `meilisearch`: meilisearch database
   - `postgres`: postgres database
 
@@ -41,9 +40,7 @@ It shouldn't be too difficult to adapt, or even dockerize everything, but some s
 Services are run as systemd user services. Services files are present in the [`services/systemd`](services/systemd) directory, which is symlinked on the server to `~/.config/systemd/user`. Services can then be managed with `systemd --user` commands:
 
 - `meilisearch.service` and `postgresql.service` can be enabled and started right away
-- The services for the backend and cronjobs have to be declined for Blue and Green instances:
-  - `backend@blue.service`, `backend@green.service`
-  - `cronjobs@blue.service`, `cronjobs@green.service`
+- The services for the backend has to be declined for Blue and Green instances: `backend@blue.service` and `backend@green.service`
 
 The alerting system works by parsing journald logs.
 

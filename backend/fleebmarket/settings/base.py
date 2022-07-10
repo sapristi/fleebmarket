@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     "search_app",
     "alerts",
     "scrapper",
+    # "tasks",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -66,8 +67,6 @@ INSTALLED_APPS = [
     "django_simple_bulma",
     "django_filters",
     "django_extensions",
-    # 'django_rename_app',
-    "huey.contrib.djhuey",
 ]
 
 SITE_ID = 1
@@ -212,10 +211,6 @@ LOGGING = {
     },
 }
 
-# Skip huey logging setup
-import huey.consumer_options
-
-huey.consumer_options.ConsumerConfig.setup_logger = lambda *args, **kwargs: None
 
 REDDIT_CREDS = {
     "client_id": os.environ["REDDIT_APP_CLIENT_ID"],
@@ -276,25 +271,6 @@ with open(REACT_BUILD_DIR / "asset-manifest.json") as f:
 REACT_CSS_PATH = data["files"]["main.css"].replace("static/", "frontend_build/static/")
 REACT_JS_PATH = data["files"]["main.js"].replace("static/", "frontend_build/static/")
 
-HUEY = {
-    "huey_class": "huey.SqliteHuey",
-    "filename": DATA_DIR / "huey" / "huey.db",  # Use db name for huey.
-    "results": True,  # Store return values of tasks.
-    "store_none": False,  # If a task returns None, do not save to results.
-    "immediate": False,
-    "utc": True,  # Use UTC for all times internally.
-    "consumer": {
-        "workers": 1,
-        "worker_type": "thread",
-        "initial_delay": 0.1,  # Smallest polling interval, same as -d.
-        "backoff": 1.15,  # Exponential backoff using this rate, -b.
-        "max_delay": 10.0,  # Max possible polling interval, -m.
-        "scheduler_interval": 1,  # Check schedule every second, -s.
-        "periodic": True,  # Enable crontab feature.
-        "check_worker_health": True,  # Enable worker health checks.
-        "health_check_interval": 1,  # Check worker health every second.
-    },
-}
 
 SCRAPPER = {
     "REDDIT_APP": {
@@ -305,5 +281,4 @@ SCRAPPER = {
         "post_limit": 1000,
         "subreddit": "mechmarket",
     },
-    "CRON": "*/5",
 }

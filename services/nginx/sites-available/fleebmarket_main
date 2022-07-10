@@ -16,17 +16,4 @@ server {
     error_page 502 /502.html;
 
     include conf-bg/main;
-
-    
-    location /monitorix {
-        alias /var/lib/monitorix/www/;
-    }
-
-    location /monitorix-cgi/ {
-        alias /var/lib/monitorix/www/cgi/;
-        include fastcgi_params;
-        fastcgi_pass unix:/run/fcgiwrap.socket;
-        fastcgi_param SCRIPT_FILENAME $request_filename;
-    }
-
 }

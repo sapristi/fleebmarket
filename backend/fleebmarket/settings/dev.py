@@ -31,5 +31,3 @@ DATABASES = {
 
 
 CORS_ALLOW_ALL_ORIGINS = True
-
-# HUEY["immediate"] = True # run synchronously.

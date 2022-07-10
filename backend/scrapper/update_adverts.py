@@ -79,7 +79,7 @@ def get_to_refresh(nb: int = 100, min_score: float = 1.0):
     return to_refresh
 
 
-def update_adverts(update_batch_size):
+def update_adverts(update_batch_size, min_score=1.0):
     to_refresh = get_to_refresh(update_batch_size)
 
     to_update: List[RedditAdvert] = []

@@ -5,6 +5,7 @@ from typing import Any, Optional
 
 import mistune
 from dateutil import tz
+from fleebmarket.utils.misc import TimeoutError, timeout
 from praw.models import Submission as PrawSubmission
 from pydantic import BaseModel
 from search_app.models import RedditAdvert, RedditAdvertType
@@ -70,12 +71,14 @@ def extract_md_ast(ast, links):
     return node_text
 
 
-url_regex = r"(?i)\b((?:https?://|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'\".,<>?«»“”‘’]))"
+url_regex = (
+    r"http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+"
+)
 
 
+@timeout(10)
 def extract_links_from_text(text: str):
-    matches = re.findall(url_regex, text)
-    return [match[0] for match in matches]
+    return re.findall(url_regex, text)
 
 
 class ParsedBody(BaseModel):
@@ -90,8 +93,12 @@ def parse_mechmarket_body(body):
     text = text.replace("&#x200B", "").replace("\x00", "").strip(" \n")
 
     links_hrefs = [l.href for l in links]
-    text_links_all = extract_links_from_text(text)
-    text_links_extra = [link for link in text_links_all if link not in links_hrefs]
+    try:
+        text_links = extract_links_from_text(text)
+    except TimeoutError:
+        logger.error("Failed extracting links from\n%s", body)
+        text_links = []
+    text_links_extra = [link for link in text_links if link not in links_hrefs]
     links.extend([Link(href=l, title=None) for l in text_links_extra])
 
     return ParsedBody(text=text, links=links)

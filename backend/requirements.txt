@@ -14,13 +14,14 @@ uvicorn
 django-extensions
 django-simple-bulma
 django-dbbackup
+uwsgi
+uwsgi_tasks
 
 fuzzywuzzy
 python-Levenshtein
 cysystemd
 tqdm
 django-click
-huey
 cysystemd
 blessings
 humanize
