@@ -282,3 +282,13 @@ SCRAPPER = {
         "subreddit": "mechmarket",
     },
 }
+
+DBBACKUP_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
+DBBACKUP_STORAGE_OPTIONS = {
+    "default_acl": "private",
+    **{
+        key.split("S3_")[1].lower(): value
+        for key, value in os.environ.items()
+        if key.startswith("S3_")
+    },
+}

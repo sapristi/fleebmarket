@@ -7,6 +7,7 @@ from uwsgi_tasks import cron, django_setup
 django_setup()
 
 from django.conf import settings
+from django.core.management import call_command
 from fleebmarket.utils import alerts, monitor
 from scrapper.fetch_new_adverts import fetch_new_adverts
 from scrapper.update_adverts import update_adverts
@@ -36,6 +37,12 @@ def send_alerts_cron(_signal_number):
         since_hours=1,
         test_channel=False,
     )
+
+
+@cron(minute=0, target="spooler")
+@cronjobs_enabled
+def backup(_signal_number):
+    call_command("dbbackup", "-z")
 
 
 @cron(minute=0, target="spooler")

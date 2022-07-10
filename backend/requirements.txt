@@ -14,6 +14,7 @@ uvicorn
 django-extensions
 django-simple-bulma
 django-dbbackup
+django-storages[boto3]
 uwsgi
 uwsgi_tasks
 
