@@ -1,7 +1,7 @@
 server {
+    listen 80;
     return 300 https://$server_name$request_uri;
     server_name fleebmarket.mmill.eu;
-    listen 80;
 }
 
 server {
