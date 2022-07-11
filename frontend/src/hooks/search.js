@@ -32,7 +32,6 @@ export const useSearchAppend = () => {
   const [searchResults, setSearchResults] = useRecoilState(searchResultsState);
   const setResultsEnd = useSetRecoilState(resultsEndState);
 
-  console.log("Search hook")
   const resFun= () => doSearch(searchInput, searchResults.length)
         .then(
           res => {

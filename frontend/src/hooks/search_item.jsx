@@ -34,7 +34,6 @@ export const useSearchItemAppend = () => {
   const [searchResults, setSearchResults] = useRecoilState(searchResultsState);
   const setResultsEnd = useSetRecoilState(resultsEndState);
 
-  console.log("Search Item hook")
   const resFun= () => doSearchItem(searchInput, searchResults.length)
         .then(
           res => {

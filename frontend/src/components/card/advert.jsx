@@ -59,7 +59,6 @@ export const AdvertCard = (item) => {
 
   const html = mdparser(item.full_text)
 
-  console.log(item)
   const { reddit_id, created_utc, extra, ad_type, author } = item;
   const { main, secondary } = get_advert_terms(ad_type, extra);
 
