@@ -96,7 +96,8 @@ def add_submissions(submissions: list[Submission]):
         added_adverts.append(reddit_advert)
     logger.info("Saved %s adverts.", len(added_adverts))
     flush_all()
-    send_alerts(added_adverts)
+    if len(added_adverts) > 0:
+        send_alerts(added_adverts)
 
 
 def fetch_new_adverts(subreddit: str, post_limit: int = 1000):
