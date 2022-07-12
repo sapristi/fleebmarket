@@ -6,7 +6,9 @@ from pathlib import Path
 
 from blessings import Terminal
 from cysystemd.reader import JournalEntry, JournalOpenMode, JournalReader, Rule
+from django.utils.timezone import now
 from fleebmarket.management.utils import Instance
+from search_app.models import RedditAdvert
 
 t = Terminal()
 
@@ -87,6 +89,13 @@ class AlertsCollector:
         self.alerts.update(
             (AlertEntry(message, service, 3) for (service, message) in errors)
         )
+
+    def collect_db_alerts(self):
+        last_advert = RedditAdvert.objects.order_by("-created_utc")[0]
+        if now() - last_advert.created_utc > timedelta(hours=6):
+            self.alerts.update(
+                [AlertEntry("No new advert scrapped since 6 hours", "scrapper", 3)]
+            )
 
     def collect_all(
         self,
