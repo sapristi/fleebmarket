@@ -63,7 +63,7 @@ class RedditAdvert(models.Model):
         else:
             MAdvertsIndex.add_to_delete(self.reddit_id)
 
-    def save(self, *args, has_changed=False, **kwargs):
+    def save(self, *args, has_changed=True, **kwargs):
         self.full_text = self.full_text.replace("\x00", "")
         if self.last_updated is None:
             self.last_updated = now()
