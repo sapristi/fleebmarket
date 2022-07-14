@@ -126,7 +126,7 @@ def update_adverts(update_batch_size, min_score=1.0):
     for reddit_id in unchanged:
         reddit_advert = RedditAdvert.objects.get(reddit_id=reddit_id)
         reddit_advert.last_updated = timezone.now()
-        reddit_advert.save()
+        reddit_advert.save(has_changed=False)
 
     for old_advert in to_update:
         old_advert.last_updated = timezone.now()
