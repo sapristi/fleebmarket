@@ -1,8 +1,7 @@
 import logging
 import os
-from datetime import datetime, timedelta
+from datetime import timedelta
 from statistics import mean
-from typing import List
 
 from django.utils import timezone
 from praw.models import Submission
@@ -79,13 +78,12 @@ def get_to_refresh(nb: int = 100, min_score: float = 1.0):
     return to_refresh
 
 
-def update_adverts(update_batch_size, min_score=1.0):
-    to_refresh = get_to_refresh(update_batch_size)
+def update_adverts(to_refresh: list[RedditAdvert]):
 
-    to_update: List[RedditAdvert] = []
-    unchanged: List[str] = []
-    to_delete: List[str] = []
-    errors: List[str] = []
+    to_update: list[RedditAdvert] = []
+    unchanged: list[str] = []
+    to_delete: list[str] = []
+    errors: list[str] = []
 
     for old_advert in to_refresh[::-1]:
         reddit_id = old_advert.reddit_id
@@ -133,3 +131,8 @@ def update_adverts(update_batch_size, min_score=1.0):
         old_advert.save()
 
     flush_all()
+
+
+def update_job(update_batch_size, min_score=1.0):
+    to_refresh = get_to_refresh(update_batch_size, min_score)
+    update_adverts(to_refresh)

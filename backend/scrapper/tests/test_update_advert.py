@@ -32,7 +32,7 @@ def test_update_advert():
             author=PrawAuthorMock(name="test_author"),
         )
     ]
-    add_submissions(submissions)
+    add_submissions(submissions)  # type: ignore
 
     ad = RedditAdvert.objects.get(reddit_id="test0")
     assert len(RedditAdvert.objects.all().filter(reddit_id="test0")) == 1
@@ -71,7 +71,7 @@ def test_update_advert_w_advert_items(monkeypatch):
         ),
     ]
 
-    add_submissions(submissions)
+    add_submissions(submissions)  # type: ignore
     while is_indexing():
         time.sleep(0.1)
 
@@ -98,7 +98,7 @@ def test_update_advert_w_advert_items(monkeypatch):
     monkeypatch.setattr(update_adverts, "get_to_refresh", mock_to_refresh(to_update))
     monkeypatch.setattr(update_adverts, "Submission", mock_submission(new_submission))
 
-    update_adverts.update_adverts(10)
+    update_adverts.update_job(10)
     while is_indexing():
         time.sleep(0.1)
 

@@ -10,7 +10,7 @@ from django.conf import settings
 from django.core.management import call_command
 from fleebmarket.utils import alerts, monitor
 from scrapper.fetch_new_adverts import fetch_new_adverts
-from scrapper.update_adverts import update_adverts
+from scrapper.update_adverts import update_job
 
 
 def are_cronjobs_enabled():
@@ -60,4 +60,4 @@ def fetch_adverts_cron(_signal_number):
 @cron(minute=-5, target="spooler")
 @cronjobs_enabled
 def update_adverts_cron(_signal_number):
-    update_adverts(update_batch_size=100)
+    update_job(update_batch_size=100)
