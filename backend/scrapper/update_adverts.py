@@ -3,13 +3,14 @@ import os
 from datetime import timedelta
 from statistics import mean
 
+from django.db.models import Q
 from django.utils import timezone
 from praw.models import Submission
 from scrapper.common import REDDIT_CLIENT
 from scrapper.parse import parse_submission
 from search_app import models
 from search_app.meilisearch_utils import flush_all
-from search_app.models import RedditAdvert
+from search_app.models import RedditAdvert, RedditAdvertType
 from six import unichr
 
 logger = logging.getLogger(__name__)
@@ -57,6 +58,8 @@ def get_to_refresh(nb: int = 100, min_score: float = 1.0):
     """Return adverts that should be refreshed:
     - adverts with high refresh score, less than 1 month old
     - adverts without flair
+    - adverts more than 1 month old, less than 300 days old, once a week
+    - recent, deleted adverts (pending approval ?)
     """
     max_update_age = os.environ.get("MAX_UPDATE_AGE", "1 month")
     high_score_ads = models.RedditAdvert.objects.raw(
@@ -71,7 +74,24 @@ def get_to_refresh(nb: int = 100, min_score: float = 1.0):
     without_type = models.RedditAdvert.objects.all().filter(
         ad_type=None, created_utc__gte=timezone.now() - timedelta(hours=2)
     )
-    to_refresh = [*high_score_ads, *without_type]
+    old_adverts = (
+        models.RedditAdvert.objects.filter(
+            created_utc__lte=timezone.now() - timedelta(days=30),
+            created_utc__gte=timezone.now() - timedelta(days=300),
+            last_updated__lte=timezone.now() - timedelta(days=7),
+        )
+        .exclude(ad_type=RedditAdvertType.Sold)
+        .exclude(ad_type=RedditAdvertType.Purchased)
+    )
+    recent_deleted = models.RedditAdvert.objects.filter(
+        deleted=True,
+        created_utc__gte=timezone.now() - timedelta(days=7),
+        last_updated__lte=timezone.now() - timedelta(days=1),
+    )
+
+    to_refresh = [*high_score_ads, *without_type, *recent_deleted]
+    if len(to_refresh) < 100:
+        to_refresh.extend(old_adverts[: 100 - len(to_refresh)])
 
     logger.info(
         "Got %s adverts to refresh; mean score is %s", len(to_refresh), mean_score
