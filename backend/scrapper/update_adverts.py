@@ -137,7 +137,9 @@ def update_adverts(to_refresh: list[RedditAdvert]):
         "%s adverts to update: %s", len(to_update), [ad.reddit_id for ad in to_update]
     )
     logger.info("%s adverts unchanged", len(unchanged))
-    logger.info("%s adverts to delete: %s", len(to_delete), to_delete)
+    logger.info(
+        "%s adverts to delete: %s", len(to_delete), [ad.reddit_id for ad in to_delete]
+    )
     if len(errors) > 0:
         logger.info("%s adverts in error%s ", len(errors))
 
