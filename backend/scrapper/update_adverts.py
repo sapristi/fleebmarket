@@ -146,7 +146,7 @@ def update_adverts(to_refresh: list[RedditAdvert]):
     for old_advert in to_delete:
         old_advert.deleted = True
         old_advert.last_updated = timezone.now()
-    RedditAdvert.objects.bulk_update(to_delete, ["last_updated"])
+    RedditAdvert.objects.bulk_update(to_delete, ["deleted", "last_updated"])
 
     for old_advert in unchanged:
         old_advert.last_updated = timezone.now()
