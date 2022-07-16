@@ -66,19 +66,15 @@ class RedditAdvert(models.Model):
         else:
             MAdvertsIndex.add_to_delete(self.reddit_id)
 
-    def save(self, *args, has_changed=True, **kwargs):
+    def save(self, *args, **kwargs):
         self.full_text = self.full_text.replace("\x00", "")
-        if self.last_updated is None:
-            self.last_updated = now()
+        self.last_updated = now()
         super(RedditAdvert, self).save(*args, **kwargs)
-        if has_changed:
-            self.save_meilisearch()
-            try:
-                self.parse_items()
-            except Exception as exc:
-                logger.exception(
-                    "Failed parsing items from advert [%s]", self.reddit_id
-                )
+        self.save_meilisearch()
+        try:
+            self.parse_items()
+        except Exception as exc:
+            logger.exception("Failed parsing items from advert [%s]", self.reddit_id)
 
     def delete(self, *args, **kwargs):
         MAdvertsIndex.add_to_delete(self.reddit_id)
