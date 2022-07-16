@@ -34,6 +34,7 @@ class RedditAdvert(models.Model):
     last_updated = models.DateTimeField(db_index=True)
     extra = JSONField(blank=True, null=True)
     is_duplicate = models.BooleanField(default=False, db_index=True)
+    deleted = models.BooleanField(default=False, db_index=True)
 
     def serialize_meilisearch(self):
         if not self.ad_type in (
@@ -45,6 +46,8 @@ class RedditAdvert(models.Model):
         if self.extra is None:
             return None
         if self.is_duplicate:
+            return None
+        if self.deleted:
             return None
         return MAdvert(
             reddit_id=self.reddit_id,
@@ -94,6 +97,8 @@ class RedditAdvert(models.Model):
 
         RedditAdvertItem.objects.filter(reddit_advert=self).delete()
         if not self.ad_type in TypesToItemize:
+            return
+        if self.deleted:
             return
         items = parse(self.full_text)
         for item in items:

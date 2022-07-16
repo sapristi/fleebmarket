@@ -10,6 +10,7 @@ from scrapper.parse import parse_submission
 from search_app import models
 from search_app.meilisearch_utils import flush_all
 from search_app.models import RedditAdvert
+from six import unichr
 
 logger = logging.getLogger(__name__)
 QUERY_adverts_by_score = """
@@ -81,8 +82,8 @@ def get_to_refresh(nb: int = 100, min_score: float = 1.0):
 def update_adverts(to_refresh: list[RedditAdvert]):
 
     to_update: list[RedditAdvert] = []
-    unchanged: list[str] = []
-    to_delete: list[str] = []
+    unchanged: list[RedditAdvert] = []
+    to_delete: list[RedditAdvert] = []
     errors: list[str] = []
 
     for old_advert in to_refresh[::-1]:
@@ -92,7 +93,7 @@ def update_adverts(to_refresh: list[RedditAdvert]):
             new_advert = parse_submission(sub)
 
             if new_advert is None:
-                to_delete.append(reddit_id)
+                to_delete.append(old_advert)
                 continue
 
             if (
@@ -102,10 +103,11 @@ def update_adverts(to_refresh: list[RedditAdvert]):
                 old_advert.ad_type = new_advert.ad_type
                 old_advert.full_text = new_advert.full_text
                 old_advert.extra = new_advert.extra
+                old_advert.deleted = False
                 to_update.append(old_advert)
 
             else:
-                unchanged.append(reddit_id)
+                unchanged.append(old_advert)
 
         except Exception as exc:
             logger.exception("Failed fetching advert %s: %s", reddit_id, exc)
@@ -114,19 +116,19 @@ def update_adverts(to_refresh: list[RedditAdvert]):
     logger.info(
         "%s adverts to update: %s", len(to_update), [ad.reddit_id for ad in to_update]
     )
-    logger.info("%s adverts unchanged: %s", len(unchanged))
+    logger.info("%s adverts unchanged", len(unchanged))
     logger.info("%s adverts to delete: %s", len(to_delete), to_delete)
     if len(errors) > 0:
         logger.info("%s adverts in error%s ", len(errors))
 
-    for reddit_id in to_delete:
-        reddit_advert = RedditAdvert.objects.get(reddit_id=reddit_id)
-        reddit_advert.delete()
+    for old_advert in to_delete:
+        old_advert.deleted = True
+        old_advert.last_updated = timezone.now()
+    RedditAdvert.objects.bulk_update(to_delete, ["last_updated"])
 
-    for reddit_id in unchanged:
-        reddit_advert = RedditAdvert.objects.get(reddit_id=reddit_id)
-        reddit_advert.last_updated = timezone.now()
-        reddit_advert.save(has_changed=False)
+    for old_advert in unchanged:
+        old_advert.last_updated = timezone.now()
+    RedditAdvert.objects.bulk_update(unchanged, ["last_updated"])
 
     for old_advert in to_update:
         old_advert.last_updated = timezone.now()
