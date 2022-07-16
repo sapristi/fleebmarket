@@ -94,7 +94,11 @@ def add_submissions(submissions: list[Submission]):
 
         reddit_advert.mark_duplicates()
         added_adverts.append(reddit_advert)
-    logger.info("Saved %s adverts.", len(added_adverts))
+    logger.info(
+        "Saved %s adverts: %s",
+        len(added_adverts),
+        [ad.reddit_id for ad in added_adverts],
+    )
     flush_all()
     if len(added_adverts) > 0:
         send_alerts(added_adverts)

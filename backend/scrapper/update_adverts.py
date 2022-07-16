@@ -111,9 +111,11 @@ def update_adverts(to_refresh: list[RedditAdvert]):
             logger.exception("Failed fetching advert %s: %s", reddit_id, exc)
             errors.append(reddit_id)
 
-    logger.info("%s adverts to update", len(to_update))
-    logger.info("%s adverts unchanged", len(unchanged))
-    logger.info("%s adverts to delete", len(to_delete))
+    logger.info(
+        "%s adverts to update: %s", len(to_update), [ad.reddit_id for ad in to_update]
+    )
+    logger.info("%s adverts unchanged: %s", len(unchanged))
+    logger.info("%s adverts to delete: %s", len(to_delete), to_delete)
     if len(errors) > 0:
         logger.info("%s adverts in error%s ", len(errors))
 
