@@ -206,7 +206,7 @@ class Instance:
             + "\n"
             + self.repo_info.format_head_info()
             + "\n"
-            f" - {'git status':<17}: {self.repo_info.format_status()}"
-            "\n"
+            f" - {'git status':<15}: {self.repo_info.format_status()}\n"
+            f"{' '*20}{self.repo_info.format_remote_status()}\n"
             f" - {self.backend_status.format_terminal()}"
         )

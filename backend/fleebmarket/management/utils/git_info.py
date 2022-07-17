@@ -1,8 +1,11 @@
 from dataclasses import dataclass
 from datetime import datetime
+from typing import Optional, Tuple
 
 from blessings import Terminal
+from django.utils.timezone import now
 from git.repo import Repo
+from humanize import naturaldelta
 
 t = Terminal()
 
@@ -11,13 +14,14 @@ t = Terminal()
 class GitCommit:
     author: str
     message: str
-    datetime: datetime
+    at: datetime
 
     def __repr__(self):
         author = t.bright_black(self.author)
-        message = t.bright_black(self.message)
-        datetime = t.bright_black(str(self.datetime))
-        return f"{message} by {author} at {datetime}"
+        message = t.bright_blue(self.message)
+        at = t.bright_blue(str(self.at))
+        when = t.bright_blue(naturaldelta(now() - self.at))
+        return f"{message} by {author} {when} ago"
 
 
 @dataclass
@@ -27,6 +31,7 @@ class GitRepoInfo:
     staged_changes: int
     untracked_files: int
     commit: GitCommit
+    remote_status: Optional[Tuple[str, str]]
 
     def is_clean(self):
         return self.staged_changes + self.unstaged_changes + self.untracked_files == 0
@@ -51,17 +56,47 @@ class GitRepoInfo:
             status_detail = "(" + ",".join(details) + ")"
             return f"{status:<32} {status_detail}"
 
+    def format_remote_status(self):
+        if self.remote_status is None:
+            return "No remote branch set"
+        else:
+            if self.remote_status == ("0", "0"):
+                return "On par with remote"
+            else:
+                ahead, behind = self.remote_status
+                res = ""
+                if ahead != "0":
+                    res += f"{t.bright_yellow(ahead)} commits ahead; "
+                if behind != "0":
+                    res += f"{t.bright_yellow(behind)} commits behind"
+                return res
+
 
 def get_git_info(path):
     repo = Repo(path)
+    repo.remotes[0].fetch()
     commit = repo.commit()
     last_commit = GitCommit(
         commit.author.name, commit.message.strip(" \n"), commit.committed_datetime  # type: ignore
     )
+    if repo.active_branch.tracking_branch() is None:
+        remote_status = None
+    else:
+        ahead_behind = repo.git.execute(
+            [
+                "git",
+                "rev-list",
+                "--left-right",
+                "--count",
+                f"{repo.active_branch.name}...origin/{repo.active_branch.name}",
+            ]
+        )
+        remote_status = tuple(ahead_behind.split("\t"))
     return GitRepoInfo(
         repo.active_branch.name,
         len(repo.index.diff(None)),
         len(repo.index.diff(repo.head.commit)),
         len(repo.untracked_files),
         last_commit,
+        remote_status,
     )
