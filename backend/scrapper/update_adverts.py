@@ -8,7 +8,6 @@ from django.utils import timezone
 from praw.models import Submission
 from scrapper.common import REDDIT_CLIENT
 from scrapper.parse import parse_submission
-from search_app import models
 from search_app.meilisearch_utils import flush_all
 from search_app.models import RedditAdvert, RedditAdvertType
 from six import unichr
@@ -45,6 +44,7 @@ FROM
         ad_type IN ('Selling', 'Buying', 'Trading')
         AND created_utc > now() - INTERVAL %s
         AND is_duplicate = false
+        AND deleted = false
     )
     AS T
 ) as s
@@ -62,7 +62,7 @@ def get_to_refresh(nb: int = 100, min_score: float = 1.0):
     - recent, deleted adverts (pending approval ?)
     """
     max_update_age = os.environ.get("MAX_UPDATE_AGE", "1 month")
-    high_score_ads = models.RedditAdvert.objects.raw(
+    high_score_ads = RedditAdvert.objects.raw(
         QUERY_adverts_by_score, [max_update_age, min_score, nb]
     )
     scores = [item.score for item in high_score_ads]
@@ -71,19 +71,20 @@ def get_to_refresh(nb: int = 100, min_score: float = 1.0):
     else:
         mean_score = None
 
-    without_type = models.RedditAdvert.objects.all().filter(
+    without_type = RedditAdvert.objects.all().filter(
         ad_type=None, created_utc__gte=timezone.now() - timedelta(hours=2)
     )
     old_adverts = (
-        models.RedditAdvert.objects.filter(
+        RedditAdvert.objects.filter(
             created_utc__lte=timezone.now() - timedelta(days=30),
             created_utc__gte=timezone.now() - timedelta(days=300),
             last_updated__lte=timezone.now() - timedelta(days=7),
         )
         .exclude(ad_type=RedditAdvertType.Sold)
         .exclude(ad_type=RedditAdvertType.Purchased)
+        .exclude(deleted=True)
     )
-    recent_deleted = models.RedditAdvert.objects.filter(
+    recent_deleted = RedditAdvert.objects.filter(
         deleted=True,
         created_utc__gte=timezone.now() - timedelta(days=7),
         last_updated__lte=timezone.now() - timedelta(days=1),

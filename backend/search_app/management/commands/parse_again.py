@@ -43,7 +43,7 @@ def handle(verbosity, since_days: int, parse_all: bool, reset_indices: bool):
     ml.set_level_from_verbosity(verbosity)
     with logging_redirect_tqdm(loggers=[ml.getLogger()]):
 
-        adverts = RedditAdvert.objects.all()
+        adverts = RedditAdvert.objects.filter(deleted=False, is_duplicate=False)
         if since_days:
             since = datetime.now() - timedelta(days=since_days)
             adverts = adverts.filter(created_utc__gt=since)
