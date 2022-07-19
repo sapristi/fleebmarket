@@ -58,24 +58,6 @@ def get(
     return data
 
 
-def collect_adverts_data_by_type():
-    return {
-        ad_type.name: RedditAdvert.objects.filter(ad_type=ad_type).count()
-        for ad_type in [
-            RedditAdvertType.Selling,
-            RedditAdvertType.Buying,
-            RedditAdvertType.Trading,
-        ]
-    }
-
-
-def collect_adverts_data_by_region():
-    return {
-        region: RedditAdvert.objects.filter(extra__region=region).count()
-        for region in ["CA", "EU", "OTHER", "US"]
-    }
-
-
 def put_to_disk():
     """Save stats to files in /tmp."""
     dest = Path("/tmp/monitorix")
@@ -88,11 +70,3 @@ def put_to_disk():
             f.write(str(data["nb_distinct"]))
         with open(dest / f"{period}_total_ip", "w") as f:
             f.write(str(data["nb_total"]))
-
-    for ad_type, count in collect_adverts_data_by_type().items():
-        with open(dest / f"{ad_type}_count", "w") as f:
-            f.write(str(count))
-
-    for region, count in collect_adverts_data_by_region().items():
-        with open(dest / f"{region}_count", "w") as f:
-            f.write(str(count))
