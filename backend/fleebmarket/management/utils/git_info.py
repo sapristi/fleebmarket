@@ -74,7 +74,10 @@ class GitRepoInfo:
 
 def get_git_info(path):
     repo = Repo(path)
-    repo.remotes[0].fetch()
+    try:
+        repo.remotes[0].fetch()
+    except Exception as exc:
+        print("Failed to fetch git remote", exc)
     commit = repo.commit()
     last_commit = GitCommit(
         commit.author.name, commit.message.strip(" \n"), commit.committed_datetime  # type: ignore

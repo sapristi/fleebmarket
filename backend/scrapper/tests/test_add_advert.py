@@ -83,7 +83,8 @@ def test_add_advert_w_advert_items():
     doc = MAdvertsIndex.client().get_document("test0")
     assert doc["reddit_id"] == "test0"
 
-    docs = MAdvertsItemsIndex.client().get_documents()
+    docs = MAdvertsItemsIndex.client().get_documents()["results"]
+
     assert len(docs) == 2
 
     assert len(RedditAdvertItem.objects.all()) == 2

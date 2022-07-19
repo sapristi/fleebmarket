@@ -1,6 +1,7 @@
 import logging
 import pathlib
 from enum import Enum
+from time import sleep
 from typing import Annotated, Generic, Type, TypeVar, get_origin, get_type_hints
 
 import meilisearch
@@ -91,16 +92,27 @@ class MeiliIndex(GenericModel, Generic[RowT]):
     def _settings(self):
         return {**self.settings.dict(), **self.row_type._settings()}
 
+    def wait_task(self, taskUid):
+        while True:
+            task = meili_client.get_task(taskUid)
+            if task["status"] not in ("enqueued", "processing"):
+                return task
+            sleep(0.1)
+
     def initialize(self):
         existing_indexes = meili_client.get_indexes()
-        existing_index_names = [index.uid for index in existing_indexes]
+        existing_index_names = [index.uid for index in existing_indexes["results"]]
         if not self.name in existing_index_names:
             logger.info(f"Creating index {self.name}")
-            meili_client.create_index(self.name, {"primaryKey": self.row_type._pkey()})
+            response = meili_client.create_index(
+                self.name, {"primaryKey": self.row_type._pkey()}
+            )
+            self.wait_task(response["taskUid"])
         else:
             logger.info(f"Index {self.name} already exists")
 
-        self.client().update_settings(self._settings())
+        response = self.client().update_settings(self._settings())
+        self.wait_task(response["taskUid"])
 
     def add_to_update(self, document: RowT):
         self._to_update.append(document)
@@ -178,7 +190,7 @@ def initialise_meilisearch():
 def clear_meilisearch():
     """Clear indices used."""
     logger.info("Reseting indices")
-    indexes = meili_client.get_indexes()
+    indexes = meili_client.get_indexes()["results"]
     index_names = [
         index.uid
         for index in indexes
@@ -193,7 +205,7 @@ def clear_meilisearch_full():
     """Clear all indices"""
     logger.info("Reseting meilisearch db")
 
-    indexes = meili_client.get_indexes()
+    indexes = meili_client.get_indexes()["results"]
     index_names = [index.uid for index in indexes]
     logger.info("Deleting indices %s", index_names)
     for index_name in index_names:
@@ -202,8 +214,8 @@ def clear_meilisearch_full():
 
 def is_indexing():
     """Check if meilisearch is indexing"""
-    tasks = meili_client.get_tasks()
-    return all(task["finishedAt"] is not None for task in tasks["results"])
+    tasks = meili_client.get_tasks({"status": ["enqueued", "processing"]})
+    return len(tasks["results"]) > 0
 
 
 def get_unfinished_tasks():

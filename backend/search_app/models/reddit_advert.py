@@ -16,6 +16,11 @@ logger = logging.getLogger(__name__)
 
 # AdvertTypes that are parsed to items
 TypesToItemize = (RedditAdvertType.Selling,)
+TypesToMeilisearch = (
+    RedditAdvertType.Selling,
+    RedditAdvertType.Buying,
+    RedditAdvertType.Trading,
+)
 
 
 class RedditAdvert(models.Model):
@@ -37,11 +42,7 @@ class RedditAdvert(models.Model):
     deleted = models.BooleanField(default=False, db_index=True)
 
     def serialize_meilisearch(self):
-        if not self.ad_type in (
-            RedditAdvertType.Selling,
-            RedditAdvertType.Buying,
-            RedditAdvertType.Trading,
-        ):
+        if not self.ad_type in TypesToMeilisearch:
             return None
         if self.extra is None:
             return None

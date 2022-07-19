@@ -80,7 +80,7 @@ def test_update_advert_w_advert_items(monkeypatch):
     meili_advert = MAdvertsIndex.client().get_document("test0")
     assert meili_advert["reddit_id"] == "test0"
 
-    meili_advert_items = MAdvertsItemsIndex.client().get_documents()
+    meili_advert_items = MAdvertsItemsIndex.client().get_documents()["results"]
     assert len(meili_advert_items) == 2
 
     assert len(RedditAdvertItem.objects.all()) == 2
@@ -108,7 +108,7 @@ def test_update_advert_w_advert_items(monkeypatch):
     assert advert_items[0].sold == True
     assert advert_items[1].sold == False
 
-    meili_advert_items = MAdvertsItemsIndex.client().get_documents()
+    meili_advert_items = MAdvertsItemsIndex.client().get_documents()["results"]
 
     assert meili_advert_items[0]["sold"] == True
     assert meili_advert_items[1]["sold"] == False
