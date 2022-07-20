@@ -1,3 +1,4 @@
+import logging
 from datetime import datetime
 from typing import Any, Optional
 
@@ -6,6 +7,8 @@ from django.http.request import HttpRequest
 from pydantic import BaseModel
 from search_app.meilisearch_utils import MAdvertsIndex
 from search_app.models import RedditAdvert, RedditAdvertType
+
+logger = logging.getLogger(__name__)
 
 
 class SearchQuery(BaseModel):
@@ -67,5 +70,9 @@ def search_wrapped(
     # take this into account
     found_ids = [ad["reddit_id"] for ad in query_res["hits"]]
     ads = RedditAdvert.objects.all().filter(reddit_id__in=found_ids)
+    if len(found_ids) != len(ads):
+        missing_ids = set(found_ids) - set(ad.id for ad in ads)
+        logger.warning("Missing ads in db: %s", missing_ids)
+
     ads_sorted = sorted(ads, key=lambda ad: found_ids.index(ad.reddit_id))
     return ads_sorted
