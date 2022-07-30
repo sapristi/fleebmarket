@@ -39,7 +39,7 @@ def send_alerts_cron(_signal_number):
     )
 
 
-@cron(minute=0, target="spooler")
+@cron(minute=0, hour=1, target="spooler")
 @cronjobs_enabled
 def backup(_signal_number):
     call_command("dbbackup", "-z")
