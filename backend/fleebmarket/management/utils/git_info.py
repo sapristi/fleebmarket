@@ -1,3 +1,4 @@
+import logging
 from dataclasses import dataclass
 from datetime import datetime
 from typing import Optional, Tuple
@@ -7,6 +8,7 @@ from django.utils.timezone import now
 from git.repo import Repo
 from humanize import naturaldelta
 
+logger = logging.getLogger(__name__)
 t = Terminal()
 
 
@@ -77,7 +79,7 @@ def get_git_info(path):
     try:
         repo.remotes[0].fetch()
     except Exception as exc:
-        print("Failed to fetch git remote", exc)
+        logger.warning("Failed to fetch git remote (%s)", exc)
     commit = repo.commit()
     last_commit = GitCommit(
         commit.author.name, commit.message.strip(" \n"), commit.committed_datetime  # type: ignore

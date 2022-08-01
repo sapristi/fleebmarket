@@ -6,11 +6,15 @@ from uwsgi_tasks import cron, django_setup
 
 django_setup()
 
+import logging
+
 from django.conf import settings
 from django.core.management import call_command
 from fleebmarket.utils import alerts, monitor
 from scrapper.fetch_new_adverts import fetch_new_adverts
 from scrapper.update_adverts import update_job
+
+logger = logging.getLogger(__name__)
 
 
 def are_cronjobs_enabled():
@@ -19,18 +23,21 @@ def are_cronjobs_enabled():
     return main_name == self_name or os.environ.get("CRONJOBS", "").lower() == "true"
 
 
-def cronjobs_enabled(f):
+def cronjob(f):
     @wraps(f)
     def wrapper(*args, **kwargs):
         if not are_cronjobs_enabled():
             return
-        return f(*args, **kwargs)
+        try:
+            return f(*args, **kwargs)
+        except Exception:
+            logger.exception(f"Failed job {f.__name__}")
 
     return wrapper
 
 
 @cron(minute=0, target="spooler")
-@cronjobs_enabled
+@cronjob
 def send_alerts_cron(_signal_number):
     alerts.send(
         discord_token=settings.DISCORD_CREDS["bot_token"],
@@ -40,24 +47,24 @@ def send_alerts_cron(_signal_number):
 
 
 @cron(minute=0, hour=1, target="spooler")
-@cronjobs_enabled
+@cronjob
 def backup(_signal_number):
     call_command("dbbackup", "-z")
 
 
 @cron(minute=0, target="spooler")
-@cronjobs_enabled
+@cronjob
 def save_metrics_cron(_signal_number):
     monitor.put_to_disk()
 
 
 @cron(minute=-5, target="spooler")
-@cronjobs_enabled
+@cronjob
 def fetch_adverts_cron(_signal_number):
     fetch_new_adverts(**settings.SCRAPPER["FETCH_NEW_ADVERTS"])
 
 
 @cron(minute=-5, target="spooler")
-@cronjobs_enabled
+@cronjob
 def update_adverts_cron(_signal_number):
     update_job(update_batch_size=100)
