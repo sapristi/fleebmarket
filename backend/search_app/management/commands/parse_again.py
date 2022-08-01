@@ -13,7 +13,8 @@ from search_app.meilisearch_utils import (
     flush_all,
     get_unfinished_tasks,
 )
-from search_app.models import RedditAdvert, RedditAdvertItem, TypesToItemize
+from search_app.models import RedditAdvert, RedditAdvertItem
+from search_app.models.reddit_advert import TypesToMeilisearch
 
 logger = ml.getLogger()
 
@@ -48,7 +49,7 @@ def handle(verbosity, since_days: int, parse_all: bool, reset_indices: bool):
             since = datetime.now() - timedelta(days=since_days)
             adverts = adverts.filter(created_utc__gt=since)
         if not parse_all:
-            adverts = adverts.filter(ad_type__in=TypesToItemize)
+            adverts = adverts.filter(ad_type__in=TypesToMeilisearch)
         logger.info("Found %s adverts in db", len(adverts))
         for advert in tqdm(adverts):
             advert.save()
