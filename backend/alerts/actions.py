@@ -42,18 +42,19 @@ def find_alerts(adverts: list[RedditAdvert]):
 
 def send_alerts(adverts: list[RedditAdvert], retry_count=5):
     to_send = find_alerts(adverts)
-    send_alerts_spooled(
-        [
-            (user, render_to_string("alerts/messages/alert", {"data": data}))
-            for user, data in to_send.items()
-        ]
-    )
+    if len(to_send) > 0:
+        send_alerts_spooled(
+            [
+                (user, render_to_string("alerts/messages/alert", {"data": data}))
+                for user, data in to_send.items()
+            ]
+        )
 
 
 # TODO: see how we could use https://github.com/Bahus/uwsgi_tasks#task-introspection-api ?
 @task(executor=TaskExecutor.SPOOLER, retry_count=2, retry_timeout=300)
 def send_alerts_spooled(to_send):
-
+    logger.info("Sending {len(to_send)} alerts.")
     for user, message in to_send:
         user.send_message("Fleebmarket: a post matched one of your alerts", message)
 
