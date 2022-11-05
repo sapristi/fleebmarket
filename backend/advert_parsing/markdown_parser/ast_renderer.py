@@ -63,6 +63,9 @@ def xml_to_ast_raw(xml) -> MdElement:
     if xml.tag == "striked":
         children = [xml_to_ast_raw(child) for child in xml]
         return Style(children=children, value=StyleValue.STRIKE)
+    if xml.tag == "b":
+        children = [xml_to_ast_raw(child) for child in xml]
+        return Style(children=children, value=StyleValue.STRONG)
     raise Exception(f"Unhandled xml tag: {xml.tag}[{xml.text}]")
 
 
@@ -71,9 +74,6 @@ def merge_styles(item: MdElement, styles: set[StyleValue]) -> MdElement:
     if isinstance(item, Text):
         return Text(text=item.text, styles=styles)
     elif isinstance(item, Style):
-        # ignore non strike for now
-        if item.value != StyleValue.STRIKE:
-            return item.apply(lambda child: merge_styles(child, styles))
         return item.apply(lambda child: merge_styles(child, styles | {item.value}))
     if isinstance(item, Parent) or isinstance(item, Table):
         return item.apply(lambda child: merge_styles(child, styles))

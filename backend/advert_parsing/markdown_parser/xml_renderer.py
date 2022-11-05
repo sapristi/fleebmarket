@@ -66,7 +66,7 @@ class XMLRenderer(BaseRenderer):
         return self.normal_text(text)
 
     def double_emphasis(self, text):
-        return text
+        return f"<b>{text}</b>"
 
     def emphasis(self, text):
         return text

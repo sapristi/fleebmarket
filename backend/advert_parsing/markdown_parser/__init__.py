@@ -19,6 +19,6 @@ from .md_ast import (
 from .xml_renderer import parse_md_to_xml
 
 
-def md_to_ast(md) -> MdElement:
+def md_to_ast(md) -> Root:
     xml = parse_md_to_xml(md)
     return xml_to_ast(xml)

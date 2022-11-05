@@ -134,3 +134,31 @@ def test_text_extraction_remove_table_minimal():
     ast = md_to_ast(md_str)
     items = list(extract_text_items(ast))
     assert len(items) == 0
+
+
+
+def test_text_extraction_separators_zero_space(advert_md):
+    md_str = advert_md("advert_with_zero_width_spaces")
+    ast = md_to_ast(md_str)
+    items = list(extract_text_items(ast))
+
+    assert len(items) == 14
+    assert len(items[0].ast.children) == 10  # make sure we have more than a single line
+
+def test_text_extraction_separators_hline(advert_md):
+    md_str = advert_md("advert_with_separators.md")
+    ast = md_to_ast(md_str)
+    items = list(extract_text_items(ast))
+
+    assert len(items) == 2
+    assert len(items[0].ast.children) == 3  # make sure we have more than a single line
+
+def test_text_extraction_separators_bold_text(advert_md):
+    md_str = advert_md("advert_with_headings_01.md")
+    ast = md_to_ast(md_str)
+    # for child in ast.children:
+    #     print(child)
+    items = list(extract_text_items(ast))
+    assert len(items) == 5
+    assert len(items[0].ast.children) == 2  # make sure we have more than a single line
+

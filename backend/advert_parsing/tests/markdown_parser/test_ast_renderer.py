@@ -79,7 +79,12 @@ test_cases = {
 a **b
 c** d
 """,
-        Root(children=[Paragraph(children=[Text(text="a b c d")])]),
+        Root(children=[Paragraph(children=[
+            Text(text="a"),
+            Text(text="b", styles={StyleValue.STRONG}),
+            Text(text="c", styles={StyleValue.STRONG}),
+            Text(text="d"),
+        ])]),
     ),
     "pre blocks and nested lists": (
         """

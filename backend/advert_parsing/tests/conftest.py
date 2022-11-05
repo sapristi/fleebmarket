@@ -14,6 +14,12 @@ def adverts_md() -> list[Tuple[str, str]]:
     for filename in md_dir.iterdir():
         if not filename.is_file():
             continue
-        with open(filename) as f:
-            res.append((str(filename.name), f.read()))
+        res.append((str(filename.name), filename.read_text()))
     return res
+
+@pytest.fixture(scope="session")
+def advert_md():
+    def inner(name):
+        md_file = DATA_DIR / "adverts_md" / name
+        return md_file.read_text()
+    return inner
