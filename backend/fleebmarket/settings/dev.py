@@ -6,7 +6,7 @@ if "django.middleware.security.SecurityMiddleware" in MIDDLEWARE:
     index = MIDDLEWARE.index("django.middleware.security.SecurityMiddleware")
 else:
     index = 0
-MIDDLEWARE.insert(index + 1, "whitenoise.middleware.WhiteNoiseMiddleware")
+# MIDDLEWARE.insert(index + 1, "whitenoise.middleware.WhiteNoiseMiddleware")
 
 
 ALLOWED_HOSTS += ["*"]

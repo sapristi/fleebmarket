@@ -1,5 +1,5 @@
 .env
-./data/
+/data/
 services/nginx/conf-bg/main
 services/nginx/conf-bg/aux
 __pycache__/

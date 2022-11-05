@@ -1,0 +1,25 @@
+{% extends "generic/base.html" %}
+{% load static %}
+
+{% block title %}Under maintenance{% endblock %}
+
+{% block body %}
+
+<article class="message is-dark">
+  <div class="card">
+    <div class="card-image">
+      <figure class="image">
+        <img src="{% static 'images/maintenance.png' %}" alt="Maintenance" style="height: 400px; object-fit: cover; object-position: 100% 0">
+      </figure>
+    </div>
+    <div class="card-content">
+      <div class="content">
+        Fleebmarket is currently in maitenance, it should be up again in some time. <br/>
+        See you again soon !
+      </div>
+    </div>
+  </div>
+</article>
+
+
+{% endblock %}

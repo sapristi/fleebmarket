@@ -49,7 +49,7 @@ class BlogSitemap(sitemaps.Sitemap):
 fleebmarket_sitemaps = {"static": StaticViewSitemap(), "blog": BlogSitemap()}
 
 urlpatterns = [
-    path("", views.redirect_search),
+    path("", views.redirect_search, name="index"),
     path("search_ads/", views.redirect_search),
     path("admin/", admin.site.urls),
     path("accounts/", include("allauth.urls")),
@@ -72,6 +72,9 @@ urlpatterns = [
         "robots.txt",
         TemplateView.as_view(template_name="robots.txt", content_type="text/plain"),
     ),
+    path(
+        "maintenance/", views.maintenance, name="maintenance"
+    )
 ]
 
 if settings.DEBUG:
