@@ -3,7 +3,6 @@ from django.conf import settings
 
 def under_maintenance():
     maintenance_file = settings.DATA_DIR / "maintenance"
-    print("MAINTENANCE", maintenance_file, maintenance_file.exists())
     return maintenance_file.exists()
 
 class MaintenanceModeMiddleware:
