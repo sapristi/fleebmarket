@@ -28,8 +28,7 @@ export const AdvertItemCard = (item) => {
    **/
 
   const { id, reddit_id, price, sold, ad_type, created_utc, author, extra, currency } = item;
-  console.log(reddit_id, extra, currency)
-  
+
   return (
     <div className={sold ? "card crossed"  : "card"}
          style={{width: "420px", margin: "10px",
