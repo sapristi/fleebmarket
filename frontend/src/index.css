@@ -32,3 +32,28 @@ code {
     width: 75%;
 }
 
+
+.corner {
+  width: 0;
+	height: 0;
+	border-top: 50px solid var(--corner-color);
+	border-right: 50px solid transparent;
+  margin-bottom: -40px;
+}
+
+.corner span {
+  position:absolute;
+  top: 10px;
+  width: 40px;
+  left: 0px;
+  text-align: center;
+  font-size: smaller;
+  transform: rotate(-45deg);
+  display:block;
+}
+
+.crossed {
+  /* width: 25%; */
+  background:linear-gradient(to top left , #fff calc(50% - 1px), #aaa, #fff calc(50% + 1px) ); 
+
+}
