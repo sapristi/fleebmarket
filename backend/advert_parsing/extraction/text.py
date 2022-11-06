@@ -109,6 +109,8 @@ def extract_items_from_text(ast: MdElement, res: list[ExtractedItem] | None = No
 
 def extract_text_items(ast: Root):
     ast_no_table = remove_tables(ast)
+    if ast_no_table is None:
+        return []
     asts = split_ast(ast_no_table)
 
     return [
