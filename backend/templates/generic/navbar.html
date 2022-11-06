@@ -15,9 +15,14 @@
   <div class="navbar-menu" id="navMenu">
     <div class="navbar-start">
 
-      <a class="navbar-item" href="{% url 'search_app:index' %}">
+      <a class="navbar-item" href="{% url 'search:index' %}">
           Search /r/mechmarket
       </a>
+      <a class="navbar-item has-ribbon-left" href="{% url 'search_item:index' %}">
+        <div class="ribbon is-small is-primary">New !</div>
+        Search parsed adverts
+      </a>
+
       <a class="navbar-item" href="{% url 'alerts:index' %}">
         Alerts
       </a>

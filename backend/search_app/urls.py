@@ -2,7 +2,6 @@ from django.conf import settings
 from django.shortcuts import render
 from django.urls import path
 
-
 def index(request):
     context = {
         "react_js": settings.REACT_JS_PATH,

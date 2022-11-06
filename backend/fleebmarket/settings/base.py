@@ -181,7 +181,13 @@ MEDIA_URL = "/media/"
 # Path where media is stored
 MEDIA_ROOT = DATA_DIR / "media/"
 
-BULMA_SETTINGS = {"output_style": "compressed", "extensions": ["bulma-switch"]}
+BULMA_SETTINGS = {
+    "output_style": "compressed",
+    "extensions": [
+        "bulma-switch",
+        "bulma-ribbon",
+    ]
+}
 
 
 MEILISEARCH = {"host": os.environ["MEILISEARCH_HOST"]}
