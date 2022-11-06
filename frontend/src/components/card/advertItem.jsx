@@ -8,14 +8,28 @@ import {
 
 import {tagColors, TimestampSpan, AuthorTag, OPTag, LocationSpan} from "./common"
 
+const display_currency = (currency) => {
+  switch (currency) {
+  case "USD":
+    return "$"
+  case "EUR":
+    return "€"
+  case "GBP":
+    return "£"
+  default:
+    return currency
+  }
+}
+
 
 export const AdvertItemCard = (item) => {
   /**
      Card that displays one advert
    **/
 
-  const { id, reddit_id, price, sold, ad_type, created_utc, author, extra } = item;
-
+  const { id, reddit_id, price, sold, ad_type, created_utc, author, extra, currency } = item;
+  console.log(reddit_id, extra, currency)
+  
   return (
     <div className={sold ? "card crossed"  : "card"}
          style={{width: "420px", margin: "10px",
@@ -34,7 +48,7 @@ export const AdvertItemCard = (item) => {
         <TimestampSpan created_utc={created_utc} />
       </div>
       <div className="card-footer">
-        <span className="card-footer-item">{item.price}$</span>
+        <span className="card-footer-item">{price} {display_currency(currency)}</span>
         <OPTag reddit_id={reddit_id} className="card-footer-item"/>
       </div>
 

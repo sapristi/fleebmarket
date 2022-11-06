@@ -30,6 +30,7 @@ class RedditAdvertItemResponse(BaseModel):
     full_text: str
     author: str
     extra: dict
+    currency: str
 
 
 def search_item(request: HttpRequest):
@@ -77,6 +78,7 @@ def search_item_wrapped(
             full_text=item.full_text,
             author=item.reddit_advert.author,
             extra=item.reddit_advert.extra,
+            currency=item.extra["currency"],
         )
         for item in ads_sorted
     ]

@@ -8,6 +8,7 @@ from django.db.models.signals import pre_delete
 from django.dispatch import receiver
 from django.utils.timezone import now
 from search_app.meilisearch_utils import MAdvert, MAdvertsIndex
+from advert_parsing.classification.prices import Currency
 
 from .common import RedditAdvertType
 from .duplicates import duplicate_offers
@@ -109,7 +110,9 @@ class RedditAdvert(models.Model):
                 price=item.relevant_price.amount,
                 sold=sold,
                 full_text=item.ast.to_html(),
-                extra={},
+                extra={
+                    "currency": item.relevant_price.currency or Currency.USD
+                },
             )
             item_obj.save()
 
