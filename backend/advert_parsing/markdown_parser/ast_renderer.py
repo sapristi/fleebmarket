@@ -69,7 +69,7 @@ def xml_to_ast_raw(xml) -> MdElement:
     raise Exception(f"Unhandled xml tag: {xml.tag}[{xml.text}]")
 
 
-def merge_styles(item: MdElement, styles: set[StyleValue]) -> MdElement:
+def merge_styles(item: MdElement, styles: set[StyleValue] = set()) -> MdElement:
     """Applies styles hints to text nodes. Does not remove Style nodes"""
     if isinstance(item, Text):
         return Text(text=item.text, styles=styles)
@@ -116,15 +116,8 @@ def collapse_ast(ast: MdElement, classes_to_collapse):
     )
 
 
-def xml_to_ast(
-    xml: "Element", merge_style: bool = True, collapse: bool = False
-) -> MdElement:
-    classes_to_collapse = []
+def xml_to_ast(xml: "Element") -> MdElement:
     ast = xml_to_ast_raw(xml)
-    if merge_style:
-        classes_to_collapse.append(Style)
-        ast = merge_styles(ast, set())
-    if collapse:
-        classes_to_collapse.extend([Cell, ListItem])
-    ast = collapse_ast(ast, classes_to_collapse)
+    ast = merge_styles(ast)
+    ast = collapse_ast(ast, {Style})
     return ast

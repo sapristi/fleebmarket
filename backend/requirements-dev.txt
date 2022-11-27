@@ -9,3 +9,5 @@ fuzzywuzzy-stubs
 whitenoise
 pgcli
 ipython-sql
+pre-commit
+devtools[pygments]

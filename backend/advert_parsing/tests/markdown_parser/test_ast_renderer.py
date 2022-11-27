@@ -13,15 +13,29 @@ from advert_parsing.markdown_parser.md_ast import (
     Table,
     Text,
 )
-from advert_parsing.markdown_parser.utils import md_wordcount, print_diff
+from advert_parsing.markdown_parser.utils import get_diff, md_wordcount
 from advert_parsing.markdown_parser.xml_renderer import parse_md_to_xml
+from devtools import debug
+
+
+def CellShortcut(*values):
+    return Cell(children=[Text(text=value) for value in values])
+
+
+def ListingShortcut(*values):
+    return Listing(children=[ListItem(children=[Text(text=value)]) for value in values])
+
+
+def ListItemShortcut(*values):
+    return ListItem(children=[Text(text=value) for value in values])
+
 
 test_cases = {
     "list": (
         """
   - a
   - b""",
-        Root(children=[Listing(children=[Text(text="a"), Text(text="b")])]),
+        Root(children=[ListingShortcut("a", "b")]),
     ),
     "list_w_markup": (
         """
@@ -32,8 +46,8 @@ test_cases = {
             children=[
                 Listing(
                     children=[
-                        Text(text="a b c."),
-                        Text(text="d"),
+                        ListItemShortcut("a b c."),
+                        ListItemShortcut("d"),
                         ListItem(
                             children=[
                                 Text(text="e", styles={StyleValue.STRIKE}),
@@ -79,12 +93,18 @@ test_cases = {
 a **b
 c** d
 """,
-        Root(children=[Paragraph(children=[
-            Text(text="a"),
-            Text(text="b", styles={StyleValue.STRONG}),
-            Text(text="c", styles={StyleValue.STRONG}),
-            Text(text="d"),
-        ])]),
+        Root(
+            children=[
+                Paragraph(
+                    children=[
+                        Text(text="a"),
+                        Text(text="b", styles={StyleValue.STRONG}),
+                        Text(text="c", styles={StyleValue.STRONG}),
+                        Text(text="d"),
+                    ]
+                )
+            ]
+        ),
     ),
     "pre blocks and nested lists": (
         """
@@ -106,7 +126,7 @@ c** d
             children=[
                 Listing(
                     children=[
-                        Text(text="a"),
+                        ListItemShortcut("a"),
                         ListItem(
                             children=[
                                 Paragraph(
@@ -138,12 +158,7 @@ c** d
                                         Text(text="g"),
                                     ]
                                 ),
-                                Listing(
-                                    children=[
-                                        Text(text="h"),
-                                        Text(text="j"),
-                                    ]
-                                ),
+                                ListingShortcut("h", "j"),
                             ]
                         ),
                     ]
@@ -156,14 +171,11 @@ c** d
 
 @pytest.mark.parametrize("md,expected", test_cases.values())
 def test_basic_md(md, expected):
-    print("MD", md)
     xml = parse_md_to_xml(md)
     ET.dump(xml)
-    ast = xml_to_ast(xml, collapse=True)
-    print("GOT")
-    print(ast)
-    print("DIFF")
-    print(print_diff(ast, expected))
+    ast = xml_to_ast(xml)
+    if diff := get_diff(ast, expected):
+        debug(MD=md, **diff)
     assert ast == expected
 
 
@@ -205,8 +217,8 @@ tables_ast = Root(
     children=[
         Table(
             rows=[
-                [Text(text="a"), Text(text="b"), Text(text="c")],
-                [Text(text="d"), Text(text="e"), Text(text="f")],
+                [CellShortcut("a"), CellShortcut("b"), CellShortcut("c")],
+                [CellShortcut("d"), CellShortcut("e"), CellShortcut("f")],
             ]
         )
     ]
@@ -217,12 +229,12 @@ table_test_cases = zip(tables_md, [tables_ast] * len(tables_md))
 
 @pytest.mark.parametrize("md,expected", table_test_cases)
 def test_tables(md, expected):
-    print("MD", md)
     xml = parse_md_to_xml(md)
     ET.dump(xml)
-    ast = xml_to_ast(xml, collapse=True)
-    print("DIFF")
-    print(print_diff(ast, expected))
+    ast = xml_to_ast(xml)
+    if diff := get_diff(ast, expected):
+        debug(MD=md, **diff)
+
     assert ast == expected
 
 
@@ -243,9 +255,10 @@ NC-27587 >>>>SOLD<<<<"""
     )
     xml = parse_md_to_xml(md)
     ET.dump(xml)
-    ast = xml_to_ast(xml, collapse=True)
-    print("DIFF")
-    print(print_diff(ast, expected))
+    ast = xml_to_ast(xml)
+    if diff := get_diff(ast, expected):
+        debug(MD=md, **diff)
+
     assert ast == expected
 
 
@@ -254,9 +267,10 @@ def test_custom_2():
     expected = Root(children=[Paragraph(children=[Text(text="SEND ME A PM HERE")])])
     xml = parse_md_to_xml(md)
     ET.dump(xml)
-    ast = xml_to_ast(xml, collapse=True)
-    print("DIFF")
-    print(print_diff(ast, expected))
+    ast = xml_to_ast(xml)
+    if diff := get_diff(ast, expected):
+        debug(MD=md, **diff)
+
     assert ast == expected
 
 
@@ -265,9 +279,10 @@ def test_custom_3():
     expected = Root(children=[Paragraph(children=[Text(text="SEND ME A PM HERE")])])
     xml = parse_md_to_xml(md)
     ET.dump(xml)
-    ast = xml_to_ast(xml, collapse=True)
-    print("DIFF")
-    print(print_diff(ast, expected))
+    ast = xml_to_ast(xml)
+    if diff := get_diff(ast, expected):
+        debug(MD=md, **diff)
+
     assert ast == expected
 
 
@@ -281,17 +296,18 @@ def test_custom_4():
         children=[
             Table(
                 rows=[
-                    [Text(text="a"), Text(text="b")],
-                    [Text(text="d"), Text(text="e")],
+                    [CellShortcut("a"), CellShortcut("b")],
+                    [CellShortcut("d"), CellShortcut("e")],
                 ]
             )
         ]
     )
     xml = parse_md_to_xml(md)
     ET.dump(xml)
-    ast = xml_to_ast(xml, collapse=True)
-    print("DIFF")
-    print(print_diff(ast, expected))
+    ast = xml_to_ast(xml)
+    if diff := get_diff(ast, expected):
+        debug(MD=md, **diff)
+
     assert ast == expected
 
 
@@ -307,28 +323,29 @@ def test_custom_5():
             Heading(children=[Text(text="title:")], level=2),
             Table(
                 rows=[
-                    [Text(text="a"), Text(text="b")],
-                    [Text(text="d"), Text(text="e")],
+                    [CellShortcut("a"), CellShortcut("b")],
+                    [CellShortcut("d"), CellShortcut("e")],
                 ]
             ),
         ]
     )
     xml = parse_md_to_xml(md)
     ET.dump(xml)
-    ast = xml_to_ast(xml, collapse=True)
-    print("DIFF")
-    print(print_diff(ast, expected))
+    ast = xml_to_ast(xml)
+    if diff := get_diff(ast, expected):
+        debug(MD=md, **diff)
+
     assert ast == expected
 
 
 @pytest.mark.parametrize("md,expected", test_cases.values())
 def test_wordcount(md, expected):
     xml = parse_md_to_xml(md)
-    ast = xml_to_ast(xml, collapse=True)
+    ast = xml_to_ast(xml)
     wc = md_wordcount(ast)
 
 
 def test_parse_adverts(adverts_md):
     for name, md in adverts_md:
         xml = parse_md_to_xml(md)
-        ast = xml_to_ast(xml, collapse=True)
+        ast = xml_to_ast(xml)

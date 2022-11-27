@@ -1,8 +1,4 @@
-from advert_parsing.classification.prices import (
-    find_price_wo_curr_in_text,
-    find_prices_in_text,
-    find_sold_token_in_text,
-)
+from advert_parsing.classification.prices import find_prices_in_text
 from advert_parsing.markdown_parser import (
     Heading,
     LineBreak,
@@ -13,11 +9,11 @@ from advert_parsing.markdown_parser import (
     Paragraph,
     Parent,
     Root,
+    StyleValue,
     Table,
     Text,
-    md_to_ast,
     ThematicBreak,
-    StyleValue
+    md_to_ast,
 )
 from advert_parsing.markdown_parser.utils import find_in_tree, split_paragraph
 
@@ -51,6 +47,7 @@ def is_heading_or_bold_text(item):
         and StyleValue.STRONG in item.children[0].styles
     )
 
+
 def split_ast(tree: Root) -> list[Root]:
     """Split the AST (by headings, breaks, etc)"""
     res = []
@@ -75,9 +72,7 @@ def get_nb_nodes_with_price(ast: MdElement) -> int:
         return 1 if len(prices) > 0 else 0
 
     elif isinstance(ast, Parent):
-        return sum(
-            get_nb_nodes_with_price(child) for child in ast.children
-        )
+        return sum(get_nb_nodes_with_price(child) for child in ast.children)
     else:
         return 0
 
@@ -113,7 +108,4 @@ def extract_text_items(ast: Root):
         return []
     asts = split_ast(ast_no_table)
 
-    return [
-        item for ast in asts
-        for item in extract_items_from_text(ast)
-    ]
+    return [item for ast in asts for item in extract_items_from_text(ast)]

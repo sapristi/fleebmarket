@@ -1,6 +1,6 @@
 import re
 from enum import Enum
-from typing import Optional
+from typing import Iterable, Optional
 
 from advert_parsing.markdown_parser import LineBreak, Text, ThematicBreak
 from pydantic import BaseModel, validator
@@ -28,8 +28,8 @@ currencies = {
 }
 
 
-def generate_curr_regexes(curr_exprs):
-    res = []
+def generate_curr_regexes(curr_exprs: list[str]):
+    res: list[re.Pattern[str]] = []
     for curr_expr in curr_exprs:
         if curr_expr == r"\\$":
             res.append(
@@ -53,6 +53,8 @@ no_curr_price_regexes = [
     re.compile(rf"{number_group_regex} ?\+ ?ship", re.I),
 ]
 
+number_only_regex = f"(?<![a-z0-9-])({number_group_regex})(?![a-z.,0-9])"
+
 
 class PriceTag(BaseModel):
     currency: Optional[Currency]
@@ -70,37 +72,50 @@ class PriceTag(BaseModel):
         extra = "forbid"
 
 
-def find_prices_in_text(text: Text) -> list[PriceTag]:
+def find_prices_in_text_inner(text_item: Text, price_regexes, price_condition=None):
+    text = text_item.text
     res = []
-    for curr, regexes in price_regexes.items():
-        for regex in regexes:
-            matches = regex.finditer(text.text)
-            res.extend(
-                PriceTag(
-                    currency=curr,
-                    amount=match.group("price"),
-                    striked=text.is_striked(),
+    for curr, regex in price_regexes:
+        matches = regex.finditer(text)
+        previous_end = 0
+        for match in matches:
+            before_match_span_full = text[previous_end : match.start()].lower()
+            before_match_span = before_match_span_full.split(".")[-1]
+            if not (
+                "for" in before_match_span[-6:]
+                and "bought" in before_match_span
+                and not (
+                    "asking for" in before_match_span
+                    or "sell for" in before_match_span
+                    or "selling for" in before_match_span
                 )
-                for match in matches
-            )
-    if not res:
-        for regex in no_curr_price_regexes:
-            matches = regex.finditer(text.text)
-            res.extend(
-                PriceTag(
-                    currency=None,
-                    amount=match.group("price"),  # type: ignore
-                    striked=text.is_striked(),
+            ):
+                res.append(
+                    PriceTag(
+                        currency=curr,
+                        amount=match.group("price"),
+                        striked=text_item.is_striked(),
+                    )
                 )
-                for match in matches
-            )
-
+            previous_end = match.end()
     return res
+
+
+def find_prices_in_text(text_item: Text) -> list[PriceTag]:
+    price_regexes_list = [
+        (curr, regex) for curr, regexes in price_regexes.items() for regex in regexes
+    ]
+    if res := find_prices_in_text_inner(text_item, price_regexes_list):
+        return res
+    if res := find_prices_in_text_inner(
+        text_item, [(None, regex) for regex in no_curr_price_regexes]
+    ):
+        return res
+    return []
 
 
 def find_price_wo_curr_in_text(text: Text, min_amount=10, max_amount=10000):
     """Find numbers in text. If a number is more than min_amount, consider it as unitless price."""
-    number_only_regex = f"(?<![a-z0-9-])({number_group_regex})(?![a-z.,0-9])"
     matches = re.finditer(number_only_regex, text.text, flags=re.IGNORECASE)
     res = []
     for match in matches:

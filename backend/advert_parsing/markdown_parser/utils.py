@@ -49,29 +49,25 @@ def md_wordcount(item: MdElement):
         raise Exception(f"Unkown element: {item.__class__} ({item})")
 
 
-def print_diff(ast1, ast2):
+def get_diff(ast1, ast2):
     if ast1.__class__ != ast2.__class__:
-        return f"""
-        {ast1}
-        {ast2}
-        """
+        return {"problem": "different classes", "got": ast1, "expected": ast2}
     if isinstance(ast1, Parent):
         if len(ast1.children) != len(ast2.children):
-            return f"""
-            {ast1}: {len(ast1.children)} children
-            {ast2}: {len(ast2.children)} children
-            """
+            return {
+                "problem": "not same number of children",
+                "got": ast1.children,
+                "expected": ast2.children,
+            }
         children_zip = zip(ast1.children, ast2.children)
         for child1, child2 in children_zip:
-            diff = print_diff(child1, child2)
+            diff = get_diff(child1, child2)
             if diff is not None:
                 return diff
 
     if ast1 != ast2:
-        return f"""
-        {ast1}
-        {ast2}
-        """
+        return {"problem": "different values", "got": ast1, "expected": ast2}
+    return None
 
 
 def find_in_tree(find_function):
